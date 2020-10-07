@@ -12,11 +12,13 @@ class Navbar extends Component {
   };
   
   render() {
+    console.log(this.props)
     return (
-      <nav class="navbar navbar-light bg-light" id="nav">
-        <a class="heading">MTG House Drafts</a>
-        <form class="form-inline">
-          <button onClick={this.onLogoutClick} class="btn btn-primary waves-effect waves-light hoverable accent-3" type="submit">Logout</button>
+      <nav className="navbar navbar-light bg-light" id="nav">
+        <a className="heading">MTG House Drafts</a>
+        <form className="form-inline">
+          {this.props.auth.isAuthenticated &&
+          <button onClick={this.onLogoutClick} className="btn btn-primary waves-effect waves-light hoverable accent-3" type="submit">Logout</button>}
         </form>
       </nav>
     );
