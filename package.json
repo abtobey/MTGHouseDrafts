@@ -1,5 +1,5 @@
 {
-  "name": "authskeleton",
+  "name": "mtghousedrafts",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/abtobey/authSkeleton.git"
+    "url": "git+https://github.com/abtobey/MTGHouseDrafts.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/abtobey/authSkeleton/issues"
+    "url": "https://github.com/abtobey/MTGHouseDrafts/issues"
   },
-  "homepage": "https://github.com/abtobey/authSkeleton#readme",
+  "homepage": "https://github.com/abtobey/MTGHouseDrafts#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
