@@ -1,0 +1,27 @@
+.playerEntry{
+    width: 50%;
+    margin: auto;
+    background-color: #eee;
+    padding: 30px;
+    border-radius: 10px;
+}
+.delete{
+    float: right;
+    color:red;
+    cursor:pointer
+}
+.playerItem{
+    width: 50%;
+    margin:auto;
+}
+.playerName{
+    text-align:left;
+}
+button{
+    margin:auto
+}
+@media screen and (max-width: 640px) {
+    .playerEntry{
+        width: 100%
+    }
+  }
