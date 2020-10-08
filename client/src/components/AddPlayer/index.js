@@ -1,10 +1,11 @@
 import { authorize } from "passport"
 import React, {useState} from "react"
 import "./style.css"
+import axios from "axios"
 
-function AddPlayer(){
+function AddPlayer(props){
 
-    const [players, setPlayers] =useState([])
+    const [players, setPlayers] =useState(["Bob","Steve","Jim","John","Mike","Aaron"])
     const [playerForm, setPlayerForm] =useState("")
     const [errorMessage, setErrorMessage]=useState("")
 
@@ -32,6 +33,18 @@ function AddPlayer(){
         array.splice(i,1);
         setPlayerForm("")
         setPlayers(array)
+    }
+    function startDraft(e){
+        e.preventDefault();
+        const newDraft={
+            format: "Zendikar",
+            players: players,
+            userId: props.user
+        }
+        console.log(newDraft)
+        axios.post("/api/drafts/draft", newDraft)
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err))
     }
 
 
@@ -68,6 +81,7 @@ function AddPlayer(){
                     letterSpacing: "1.5px",
                     marginTop: "1rem"
                   }}
+                  onClick={startDraft}
                   type="submit"
                   className="btn btn-large waves-effect waves-light hoverable green accent-3"
                 >

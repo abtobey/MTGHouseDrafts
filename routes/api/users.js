@@ -8,11 +8,14 @@ const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
 // Load User model
 const User = require("../../models/User");
+const Draft = require("../../models/Draft");
+
 
 // @route POST api/users/register
 // @desc Register user
 // @access Public
 router.post("/register", (req, res) => {
+  console.log("Hello")
     // Form validation
   const { errors, isValid } = validateRegisterInput(req.body);
   // Check validation
@@ -26,6 +29,8 @@ router.post("/register", (req, res) => {
         const newUser = new User({
           name: req.body.name,
           email: req.body.email,
+          description: req.body.description,
+          location: req.body.location,
           password: req.body.password
         });
   // Hash password before saving in database
@@ -92,5 +97,6 @@ router.post("/login", (req, res) => {
       });
     });
   });
+
 
   module.exports = router;

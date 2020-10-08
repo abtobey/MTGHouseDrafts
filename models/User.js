@@ -23,6 +23,12 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
+  drafts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Draft"
+    }
+  ],
   date: {
     type: Date,
     default: Date.now

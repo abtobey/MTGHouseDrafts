@@ -21,7 +21,9 @@ return (
                 Welcome to MTG House Drafts
               </p>
             </h4>
-          <AddPlayer/>
+          <AddPlayer
+          user={this.props.auth.user.id}
+          />
           </div>
         </div>
       </div>
