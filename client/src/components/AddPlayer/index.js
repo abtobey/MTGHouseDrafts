@@ -1,5 +1,6 @@
 import React, {useState} from "react"
 import "./style.css"
+import {Redirect} from "react-router"
 import axios from "axios"
 
 function AddPlayer(props){
@@ -7,6 +8,11 @@ function AddPlayer(props){
     const [players, setPlayers] =useState([])
     const [formObject, setFormObject] =useState({})
     const [errorMessage, setErrorMessage]=useState("")
+    const [redirect, setRedirect] =useState({
+        start: false,
+        id: ""
+    })
+    
 
     function handleInputChange(e){
         const { name, value } = e.target;
@@ -41,14 +47,21 @@ function AddPlayer(props){
             players: players,
             userId: props.user
         }
-        console.log(newDraft)
         axios.post("/api/drafts/draft", newDraft)
-        .then((res) => console.log(res))
+        .then((res) => {
+            console.log(res)
+            setRedirect({
+                start: true,
+                id: res.data._id
+            })
+        })
         .catch((err) => console.log(err))
     }
 
 
     return(
+        <>
+        {redirect.start ? <Redirect to={"/tournament/"+redirect.id}/>:
         <div className="playerEntry">
             <label htmlFor="Format">Format</label>
             <input
@@ -98,7 +111,8 @@ function AddPlayer(props){
                 </button>}
                 {players.map((player, i) => <p className="playerItem" key={i} ><span className="playerName">{player}</span> <span className="delete" id={i} onClick={removePlayer}>X</span></p>)}
 
-        </div>
+        </div>}
+        </>
 
     )
 
