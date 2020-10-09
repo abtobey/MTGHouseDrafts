@@ -16,8 +16,8 @@ router.post("/draft", (req,res) => {
     .catch(err => console.log(err))
   })
 
-router.get("/draft", (req,res) => {
-    Draft.findAll({_id: req.body._id})
+router.get("/draft/:_id", (req,res) => {
+    Draft.findOne({_id: req.params._id})
     .then(data => res.json(data))
     .catch(err => console.log(err))
 })

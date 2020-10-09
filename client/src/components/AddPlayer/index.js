@@ -1,43 +1,43 @@
-import { authorize } from "passport"
 import React, {useState} from "react"
 import "./style.css"
 import axios from "axios"
 
 function AddPlayer(props){
 
-    const [players, setPlayers] =useState(["Bob","Steve","Jim","John","Mike","Aaron"])
-    const [playerForm, setPlayerForm] =useState("")
+    const [players, setPlayers] =useState([])
+    const [formObject, setFormObject] =useState({})
     const [errorMessage, setErrorMessage]=useState("")
 
     function handleInputChange(e){
-        setPlayerForm(e.target.value)
+        const { name, value } = e.target;
+        setFormObject({ ...formObject, [name]: value })
     }
     function addToList(e){
         e.preventDefault();
         setErrorMessage("")
-        if(players.includes(playerForm)){
-            setErrorMessage(playerForm +" already added")
+        if(players.includes(formObject.player)){
+            setErrorMessage(formObject.player +" already added")
         }
         else if(players.length >=10){
             setErrorMessage("Maximum is 10 players")
 
         }
         else{
-        setPlayers([...players, playerForm])
+        setPlayers([...players, formObject.player])
         }
-        setPlayerForm("")
+        setFormObject({...formObject, player: ""})
     }
     function removePlayer(e){
         let i=e.target.id
         let array=[...players];
         array.splice(i,1);
-        setPlayerForm("")
+        setFormObject({...formObject, player: ""})
         setPlayers(array)
     }
     function startDraft(e){
         e.preventDefault();
         const newDraft={
-            format: "Zendikar",
+            format: formObject.format,
             players: players,
             userId: props.user
         }
@@ -50,11 +50,20 @@ function AddPlayer(props){
 
     return(
         <div className="playerEntry">
+            <label htmlFor="Format">Format</label>
+            <input
+                  onChange={handleInputChange}
+                  value={formObject.format || ""}
+                  id="format"
+                  name="format"
+                  type="text"
+                />
             <label htmlFor="PlayerForm">Enter Player Name</label>
             <input
                   onChange={handleInputChange}
-                  value={playerForm}
-                  id="playerForm"
+                  value={formObject.player || ""}
+                  id="player"
+                  name="player"
                   type="text"
                 />
                 {players.length < 6 && <p>Must have at least 6 players</p>}
