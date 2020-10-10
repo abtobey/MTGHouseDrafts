@@ -40,11 +40,26 @@ function AddPlayer(props){
         setFormObject({...formObject, player: ""})
         setPlayers(array)
     }
+    //shuffle list of players to randomize round 1 pairings
+    function shuffle(array){
+        let newArray=[]
+        while(newArray.length < array.length){
+            let next=Math.round(Math.random()*(array.length-1))
+            if(!newArray.includes(array[next])){
+                newArray.push(array[next])
+            }
+    
+        }
+        return newArray
+    }
+
     function startDraft(e){
         e.preventDefault();
+        //randomizing order of players before submitting to database so they are not re-ordered if the page is realoded
+        let randomized=shuffle(players);
         const newDraft={
             format: formObject.format,
-            players: players,
+            players: randomized,
             userId: props.user
         }
         axios.post("/api/drafts/draft", newDraft)
