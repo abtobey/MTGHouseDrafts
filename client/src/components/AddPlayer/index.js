@@ -50,7 +50,21 @@ function AddPlayer(props){
             }
     
         }
-        return newArray
+        //now initialize player objects
+        let playerObjects=[]
+        for(let i=0; i<newArray.length; i++){
+            playerObjects.push({
+                id: i+1,
+                name: newArray[i],
+                matchWins: 0,
+                gameWins: 0,
+                matchLosses: 0,
+                gameLosses: 0,
+                matchDraws: 0,
+                opponents:[]
+            })
+        }
+        return JSON.stringify(playerObjects)
     }
 
     function startDraft(e){

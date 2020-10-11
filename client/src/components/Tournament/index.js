@@ -12,17 +12,19 @@ function Tournament(){
     axios.get("/api/drafts/draft/"+id)
     .then(res =>{
         console.log(res.data)
-        setPlayerList(res.data.players)
+        setPlayerList(JSON.parse(res.data.players))
         setFormat(res.data.format)
     })
     },[])
+
+
 
     return(
         <div className="container">
             <h4>Draft ID: {id}</h4>
             <h5>format: {format}</h5>
             <h5>Players</h5>
-            {playerList.map((player, i) => <p key={i}>{player}</p>)}
+            {playerList.map((player, i) => <p key={i}>{player.name}</p>)}
         </div>
 
     )
