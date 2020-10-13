@@ -81,7 +81,7 @@ function AddPlayer(props){
             console.log(res)
             setRedirect({
                 start: true,
-                id: res.data._id
+                id: res.data
             })
         })
         .catch((err) => console.log(err))

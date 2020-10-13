@@ -10,10 +10,9 @@ router.post("/draft", (req,res) => {
         format:req.body.format,
         userId:req.body.userId
     });
-    console.log("something")
     Draft.create(newDraft)
-    .then(data => res.json(data))
     .then(({_id})  => User.findOneAndUpdate({"_id": req.body.userId}, {$push: {drafts: _id}}, {new:true}))
+    .then(data=> res.json(data.drafts[data.drafts.length-1]))
     .catch(err => console.log(err))
   })
 

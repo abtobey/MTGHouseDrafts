@@ -1,0 +1,13 @@
+.player1{
+    text-align: right;
+}
+.vs{
+    text-align:center;
+}
+@media screen and (max-width: 640px) {
+
+    .wins1, .wins2{
+        width:100%;
+    }
+  }
+  
