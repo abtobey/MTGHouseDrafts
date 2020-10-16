@@ -1,8 +1,15 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import Dashboard from "../dashboard/Dashboard"
+
+
 class Landing extends Component {
   render() {
-    return (
+    const loggedIn=(this.props.auth.isAuthenticated)
+    return (<>
+      {loggedIn ? <Dashboard/> :
       <div style={{ height: "75vh" }} className="container">
         <div className="row">
           <div className="col s12 center-align">
@@ -42,7 +49,17 @@ class Landing extends Component {
           </div>
         </div>
       </div>
+      }
+      </>
     );
   }
 }
-export default Landing;
+Landing.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+export default connect(
+  mapStateToProps
+)(Landing);
