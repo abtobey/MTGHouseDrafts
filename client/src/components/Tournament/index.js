@@ -3,6 +3,7 @@ import "./style.css"
 import axios from "axios"
 import {useParams} from "react-router-dom"
 import Match from "../Match"
+import Standings from "../Standings"
 
 function Tournament(){
     const id=useParams().id
@@ -47,8 +48,41 @@ function Tournament(){
         <div className="container">
             <h4>Draft ID: {id}</h4>
             <h5>format: {format}</h5>
-            <h5>Players</h5>
-            {playerList.map((player, i) => <p key={i}>{player.name}</p>)}
+            <div className="row">
+            <div className="col-1">
+                ID
+            </div>
+            <div className="playerName col-2">
+                Name
+            </div>
+            <div className="col-1">
+                Points
+            </div>
+            <div className="col-1">
+                Match wins
+            </div>
+            <div className="col-1">
+                Match losses
+            </div>
+            <div className="col-1">
+                Match Draws
+            </div>
+            <div className="col-1">
+                Game Wins
+            </div>
+            <div className="col-1">
+                Game losses
+            </div>
+        </div>
+            {playerList.map((player, i) => <Standings 
+            playerName={player.name}
+            matchWins={player.matchWins}
+            matchDraws={player.matchDraws}
+            matchLosses={player.matchLosses}
+            gameWins={player.gameWins}
+            gameLosses={player.gameLosses}
+            id={player.id}
+            key={i} />)}
             {matches.map((match, i) => <Match key={i} player1={match[0]} player2={match[1]}/>)}
         </div>
 
