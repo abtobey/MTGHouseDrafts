@@ -3,14 +3,20 @@ import "./style.css"
 
 function Match(props){
 const [games, setGames] = useState({wins1: 0, wins2: 0})
+const [entered, setEntered]=useState(false)
 
 function handleInputChange(event){
     const {name, value} =event.target;
     setGames({...games, [name]: value})
 }
 
+function handleSubmit(){
+  setEntered(true);
+  props.onClick(props.id, props.player1, props.player2, parseInt(games.wins1), parseInt(games.wins2))
+}
+
     return(
-        <div className="row">
+        <div className="row" key={props.id}>
             <span className="player1 col-md-3 col-2">{props.player1}</span>
             {props.player2 !== "Bye" ?
             <>
@@ -42,10 +48,10 @@ function handleInputChange(event){
             }}
             disabled={!games.wins1 && !games.wins2}
             type="button"
-            onClick={() => {props.onClick(props.player1, props.player2, parseInt(games.wins1), parseInt(games.wins2))}}
+            onClick={() => handleSubmit()}
             className="btn btn-primary waves-effect waves-light hoverable accent-3"
           >
-            Update
+            {entered ? "Update" : "Enter"}
           </button>}
         </div>
     )

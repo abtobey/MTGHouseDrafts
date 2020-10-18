@@ -21,11 +21,13 @@ function Tournament(){
     .then(res =>{
         console.log(res.data)
         const players=JSON.parse(res.data.players)
+        console.log(players)
         setPlayerList(players)
         setFormat(res.data.format)
         const playerNames=players.map(item => item.name)
+        if(roundNum==1){
         setMatches(firstRoundMatchups(playerNames))
-        initRound(players)
+        }
     })
     },[])
 
@@ -33,29 +35,41 @@ function Tournament(){
         let matches=[]
         let diff=0;
         let len=list.length
+        let bye=-1;
         if(len % 2 ==1){
-            matches.push([list[len-1], "Bye"])
+            matches.push({player1: list[len-1], player2: "Bye", complete: true})
             diff=(len-1)/2
+            bye=len-1
         }else{
             diff=len/2
         }
         for(let i=0; i<diff; i++){
-            matches.push([list[i], list[i+diff]])
+            matches.push({player1: list[i], player2: list[i+diff], complete: false})
         }
+        initRound(list, bye)
         return matches
     }
 
-    function initRound(players){
+    function initRound(players, bye){
         let blankStandings= []
         blankStandings=players.map((player) => ({
             points: 0,
             wins: 0,
             losses: 0
         }))
+        if(bye !== -1){
+            blankStandings[bye].points =3
+        }
+        console.log(blankStandings)
         setCurrentRound(blankStandings)
     }
 
-    function updateStandings(p1, p2, wins1, wins2){
+    function updateStandings(id, p1, p2, wins1, wins2){
+        let matchArray = matches;
+        matchArray[id].complete=true;
+        matchArray[id].player1="Foo";
+        console.log(matchArray)
+        setMatches(matchArray)
         let points1=0;
         let points2=0;
         if(wins1 > wins2){
@@ -125,7 +139,7 @@ function Tournament(){
             gameLosses={player.gameLosses}
             id={player.id}
             key={i} />)}
-            {matches.map((match, i) => <Match key={i} onClick={updateStandings} player1={match[0]} player2={match[1]}/>)}
+            {matches.map((match, i) => <Match key={i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
         </div>
 
     )
