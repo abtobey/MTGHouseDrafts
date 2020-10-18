@@ -2,7 +2,7 @@ import React, {useState} from "react"
 import "./style.css"
 
 function Match(props){
-const [games, setGames] = useState({})
+const [games, setGames] = useState({wins1: 0, wins2: 0})
 
 function handleInputChange(event){
     const {name, value} =event.target;
@@ -15,7 +15,7 @@ function handleInputChange(event){
             {props.player2 !== "Bye" ?
             <>
             <div className="form-group col-md-1 col-3">
-            <select className="form-control" onChange={handleInputChange} name="wins1" id="wins1">
+            <select className="form-control" type="number" onChange={handleInputChange} name="wins1" id="wins1">
             <option>0</option>
             <option>1</option>
             <option>2</option>
@@ -23,7 +23,7 @@ function handleInputChange(event){
             </div>
             <span className="vs col-1">vs</span>
             <div className="form-group col-md-1 col-3">
-            <select className="form-control" onChange={handleInputChange} name= "wins2" id="wins2">
+            <select className="form-control" type="number" onChange={handleInputChange} name= "wins2" id="wins2">
             <option>0</option>
             <option>1</option>
             <option>2</option>
@@ -41,7 +41,8 @@ function handleInputChange(event){
               letterSpacing: "1.5px",
             }}
             disabled={!games.wins1 && !games.wins2}
-            type="submit"
+            type="button"
+            onClick={() => {props.onClick(props.player1, props.player2, parseInt(games.wins1), parseInt(games.wins2))}}
             className="btn btn-primary waves-effect waves-light hoverable accent-3"
           >
             Update

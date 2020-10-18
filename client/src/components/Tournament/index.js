@@ -13,6 +13,8 @@ function Tournament(){
     //get the first round working and then we'll get back to this
     // const [currentRound, setCurrentRound] =useState(0)
     const [matches, setMatches] =useState([])
+    const [roundNum, setRoundNum] =useState(1)
+    const [currentRound, setCurrentRound] = useState([])
 
     useEffect(() => {
     axios.get("/api/drafts/draft/"+id)
@@ -23,6 +25,7 @@ function Tournament(){
         setFormat(res.data.format)
         const playerNames=players.map(item => item.name)
         setMatches(firstRoundMatchups(playerNames))
+        initRound(players)
     })
     },[])
 
@@ -40,6 +43,45 @@ function Tournament(){
             matches.push([list[i], list[i+diff]])
         }
         return matches
+    }
+
+    function initRound(players){
+        let blankStandings= []
+        blankStandings=players.map((player) => ({
+            points: 0,
+            wins: 0,
+            losses: 0
+        }))
+        setCurrentRound(blankStandings)
+    }
+
+    function updateStandings(p1, p2, wins1, wins2){
+        let points1=0;
+        let points2=0;
+        if(wins1 > wins2){
+            points1=3;
+        }else if(wins1 < wins2){
+            points2=3;
+        }else{
+            points1=1;
+            points2=1;
+        }
+        
+        let newRound=currentRound
+        
+        for(let i=0; i<playerList.length; i++){
+            if(playerList[i].name=== p1){
+                newRound[i].wins=wins1;
+                newRound[i].losses=wins2;
+                newRound[i].points=points1;
+            }else if(playerList[i].name=== p2){
+                newRound[i].wins=wins2;
+                newRound[i].losses=wins1;
+                newRound[i].points=points2;
+            }
+        }
+        console.log(newRound)
+        setCurrentRound(newRound)
     }
 
 
@@ -83,7 +125,7 @@ function Tournament(){
             gameLosses={player.gameLosses}
             id={player.id}
             key={i} />)}
-            {matches.map((match, i) => <Match key={i} player1={match[0]} player2={match[1]}/>)}
+            {matches.map((match, i) => <Match key={i} onClick={updateStandings} player1={match[0]} player2={match[1]}/>)}
         </div>
 
     )
