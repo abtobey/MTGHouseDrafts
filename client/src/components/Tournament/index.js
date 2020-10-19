@@ -18,36 +18,38 @@ function Tournament(){
     useEffect(() => {
     axios.get("/api/drafts/draft/"+id)
     .then(res =>{
-        console.log(res.data)
+        // console.log(res.data)
         const players=JSON.parse(res.data.players)
-        console.log(players)
-        setPlayerList(players)
+        // console.log(players)
         setFormat(res.data.format)
-        const playerNames=players.map(item => item.name)
         //this is just a placeholder for now, later I will need to add a number of rounds to the database so you can close the browser window
         if(roundNum===1){
-        setMatches(firstRoundMatchups(playerNames))
+        setMatches(firstRoundMatchups(players))
         }
     })
     },[])
 
     //first round pairs people who would be sitting across the table from each other.
     function firstRoundMatchups(list){
+        const playerNames=list.map(item => item.name)
         let matches=[]
         let diff=0;
         let len=list.length
         let bye=-1;
         //if there is an odd number, give the person last in the array a bye
         if(len % 2 ===1){
-            matches.push({player1: list[len-1], player2: "Bye", complete: true})
+            matches.push({player1: playerNames[len-1], player2: "Bye", complete: true})
             diff=(len-1)/2
             bye=len-1
         }else{
             diff=len/2
         }
         for(let i=0; i<diff; i++){
-            matches.push({player1: list[i], player2: list[i+diff], complete: false})
+            matches.push({player1: playerNames[i], player2: playerNames[i+diff], complete: false})
+            list[i].opponents.push(playerNames[i+diff])
+            list[i+diff].opponents.push(playerNames[i])
         }
+        setPlayerList(list)
         initRound(list, bye)
         return matches
     }
@@ -63,8 +65,54 @@ function Tournament(){
         if(bye !== -1){
             blankStandings[bye].points =3
         }
-        console.log(blankStandings)
+        // console.log(blankStandings)
         setCurrentRound(blankStandings)
+    }
+
+    //this is for starting any round after round 1
+    function startNextRound(){
+        setRoundNum(roundNum +1)
+        //initialize by as -1, if this remains -1 when this function is done, no bye will be assigned.
+        let bye=-1;
+        //get an array of players and their point totals
+        let newRound=[]
+        let unmatched=[]
+        for(let i=0; i<playerList.length; i++){
+            unmatched.push({name: playerList[i].name, points:(playerList[i].matchWins*3 + playerList[i].matchDraws), index: i})
+        }
+        while(unmatched.length >1){
+            let samePoints=0;
+            for(let i=1; i< unmatched.length; i++){
+                if (unmatched[i].points===unmatched[0].points){
+                    samePoints++
+                }
+            }
+            if(samePoints >0){
+                const partner=(Math.floor(Math.random() * samePoints))+1
+                newRound.push({"player1": unmatched[0].name, "player2":unmatched[partner].name})
+                unmatched.splice(partner, 1)
+                unmatched.splice(0,1)
+            }else{
+                //if there are no more people with the same amount of points, we have to pair with someone with the next highest amount
+                let nextHighest=unmatched[1].points
+                let nextHighestPoints=0
+                for(let j=1; j< unmatched.length; j++){
+                    if (unmatched[j].points===nextHighest){
+                        nextHighestPoints++
+                    }
+                    const partner=(Math.floor(Math.random() * nextHighestPoints))+1
+                    newRound.push({"player1": unmatched[0].name, "player2":unmatched[partner].name})
+                    unmatched.splice(partner, 1)
+                    unmatched.splice(0,1)
+                }
+            }
+        }
+        if(unmatched.length===1){
+            newRound.push({"player1": unmatched[0].name, "player2": "Bye"})
+            bye=unmatched[0].index
+            console.log(bye)
+        }
+        console.log(newRound)
     }
 
     function updateStandings(id, p1, p2, wins1, wins2){
@@ -126,6 +174,7 @@ function Tournament(){
         })
         console.log(newStandings)
         setPlayerList([...playerList],newStandings)
+        startNextRound();
     }
 
     return(
