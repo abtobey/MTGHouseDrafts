@@ -116,11 +116,15 @@ function Tournament(){
             if(currentRound[i].points === 3){
                 newStandings[i].matchWins +=1;
             }else if(currentRound[i].points===1){
-                newStandings[i].matchLosses +=1;
+                newStandings[i].matchDraws +=1;
             }else if(currentRound[i].points===0){
                 newStandings[i].matchLosses+=1;
             }
         }
+        newStandings.sort((a, b) => {
+            return (a.matchWins * 3 + a.matchDraws)>(b.matchWins*3 + b.matchDraws) ? -1 : 1
+        })
+        console.log(newStandings)
         setPlayerList([...playerList],newStandings)
     }
 
