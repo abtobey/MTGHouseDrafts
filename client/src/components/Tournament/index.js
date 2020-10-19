@@ -10,11 +10,10 @@ function Tournament(){
 
     const [playerList, setPlayerList] =useState([])
     const [format, setFormat] =useState("")
-    //get the first round working and then we'll get back to this
-    // const [currentRound, setCurrentRound] =useState(0)
     const [matches, setMatches] =useState([])
     const [roundNum, setRoundNum] =useState(1)
     const [currentRound, setCurrentRound] = useState([])
+    const [roundComplete, setRoundComplete] = useState(false)
 
     useEffect(() => {
     axios.get("/api/drafts/draft/"+id)
@@ -25,18 +24,21 @@ function Tournament(){
         setPlayerList(players)
         setFormat(res.data.format)
         const playerNames=players.map(item => item.name)
-        if(roundNum==1){
+        //this is just a placeholder for now, later I will need to add a number of rounds to the database so you can close the browser window
+        if(roundNum===1){
         setMatches(firstRoundMatchups(playerNames))
         }
     })
     },[])
 
+    //first round pairs people who would be sitting across the table from each other.
     function firstRoundMatchups(list){
         let matches=[]
         let diff=0;
         let len=list.length
         let bye=-1;
-        if(len % 2 ==1){
+        //if there is an odd number, give the person last in the array a bye
+        if(len % 2 ===1){
             matches.push({player1: list[len-1], player2: "Bye", complete: true})
             diff=(len-1)/2
             bye=len-1
@@ -50,6 +52,7 @@ function Tournament(){
         return matches
     }
 
+    //reset the round to all zeroes (except for the person with a bye, who gets a match win but no game wins)
     function initRound(players, bye){
         let blankStandings= []
         blankStandings=players.map((player) => ({
@@ -67,11 +70,18 @@ function Tournament(){
     function updateStandings(id, p1, p2, wins1, wins2){
         let matchArray = matches;
         matchArray[id].complete=true;
-        matchArray[id].player1="Foo";
+        let completeCheck=true;
+        for(let i=0; i< matchArray.length; i++){
+            if(matchArray[i].complete===false){
+                completeCheck=false;
+            }
+        }
+        setRoundComplete(completeCheck)
         console.log(matchArray)
         setMatches(matchArray)
         let points1=0;
         let points2=0;
+        //calculate the points here instead of having to pass them through as parameters. 3 for a win, 1 for a draw
         if(wins1 > wins2){
             points1=3;
         }else if(wins1 < wins2){
@@ -82,7 +92,7 @@ function Tournament(){
         }
         
         let newRound=currentRound
-        
+        //match player names to list of players and update wins and losses
         for(let i=0; i<playerList.length; i++){
             if(playerList[i].name=== p1){
                 newRound[i].wins=wins1;
@@ -98,7 +108,21 @@ function Tournament(){
         setCurrentRound(newRound)
     }
 
-
+    function finishRound(){
+        let newStandings=playerList;
+        for(let i=0; i<currentRound.length; i++){
+            newStandings[i].gameWins += currentRound[i].wins;
+            newStandings[i].gameLosses += currentRound[i].losses;
+            if(currentRound[i].points === 3){
+                newStandings[i].matchWins +=1;
+            }else if(currentRound[i].points===1){
+                newStandings[i].matchLosses +=1;
+            }else if(currentRound[i].points===0){
+                newStandings[i].matchLosses+=1;
+            }
+        }
+        setPlayerList([...playerList],newStandings)
+    }
 
     return(
         <div className="container">
@@ -138,8 +162,9 @@ function Tournament(){
             gameWins={player.gameWins}
             gameLosses={player.gameLosses}
             id={player.id}
-            key={i} />)}
+            key={player.id} />)}
             {matches.map((match, i) => <Match key={i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
+            {roundComplete && <button onClick={finishRound}>Finish Round</button>}
         </div>
 
     )
