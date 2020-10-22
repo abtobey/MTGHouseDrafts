@@ -72,6 +72,7 @@ function Tournament(){
     //this is for starting any round after round 1
     function startNextRound(){
         setRoundNum(roundNum +1)
+        setRoundComplete(false)
         //initialize by as -1, if this remains -1 when this function is done, no bye will be assigned.
         let bye=-1;
         //get an array of players and their point totals
