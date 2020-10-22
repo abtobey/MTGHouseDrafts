@@ -3,7 +3,7 @@ import "./style.css"
 
 function Match(props){
 const [games, setGames] = useState({wins1: 0, wins2: 0})
-const [entered, setEntered]=useState(false)
+const [entered, setEntered]=useState(props.complete)
 
 function handleInputChange(event){
     const {name, value} =event.target;
@@ -21,7 +21,7 @@ function handleSubmit(){
             {props.player2 !== "Bye" ?
             <>
             <div className="form-group col-md-1 col-3">
-            <select className="form-control" type="number" onChange={handleInputChange} name="wins1" id="wins1">
+            <select className="form-control" type="number" onChange={handleInputChange} name="wins1" id="wins1" value={games.wins1 || 0}>
             <option>0</option>
             <option>1</option>
             <option>2</option>
@@ -29,7 +29,7 @@ function handleSubmit(){
             </div>
             <span className="vs col-1">vs</span>
             <div className="form-group col-md-1 col-3">
-            <select className="form-control" type="number" onChange={handleInputChange} name= "wins2" id="wins2">
+            <select className="form-control" type="number" onChange={handleInputChange} name= "wins2" id="wins2" value={games.wins2 || 0}>
             <option>0</option>
             <option>1</option>
             <option>2</option>

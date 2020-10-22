@@ -113,6 +113,7 @@ function Tournament(){
             console.log(bye)
         }
         console.log(newRound)
+        setMatches(newRound)
     }
 
     function updateStandings(id, p1, p2, wins1, wins2){
@@ -216,7 +217,7 @@ function Tournament(){
             gameLosses={player.gameLosses}
             id={player.id}
             key={player.id} />)}
-            {matches.map((match, i) => <Match key={i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
+            {matches.map((match, i) => <Match key={roundNum + " " +i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
             {roundComplete && <button onClick={finishRound}>Finish Round</button>}
         </div>
 
