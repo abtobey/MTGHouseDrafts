@@ -37,7 +37,7 @@ function handleSubmit(){
             </div>
             
             </>
-            : <><span className="col-8"></span><br></br></>}
+            : <><span className="col-md-3 col-8"></span><br></br></>}
             <span className="player2 col-md-3 col-2">{props.player2}</span>
             {props.player2 !== "Bye" && 
             <button
