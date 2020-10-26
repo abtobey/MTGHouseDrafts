@@ -7,7 +7,7 @@ const User = require("../../models/User");
 router.post("/draft", (req,res) => {
     const newDraft=new Draft({
         players:req.body.players,
-        round: 0,
+        round: 1,
         format:req.body.format,
         userId:req.body.userId
     });

@@ -20,10 +20,12 @@ function Tournament(){
     .then(res =>{
         // console.log(res.data)
         const players=JSON.parse(res.data.players)
+        const round=res.data.round
+        setRoundNum(round)
         // console.log(players)
         setFormat(res.data.format)
         //this is just a placeholder for now, later I will need to add a number of rounds to the database so you can close the browser window
-        if(roundNum===1){
+        if(round===1){
         setMatches(firstRoundMatchups(players))
         }
     })
@@ -82,12 +84,10 @@ function Tournament(){
         for(let i=0; i<playerList.length; i++){
             unmatched.push({name: playerList[i].name, points:(playerList[i].matchWins*3 + playerList[i].matchDraws), opponents: playerList[i].opponents, index: i})
         }
-        console.log("unmatched")
-        console.log(unmatched)
         let nextBatch=[]
         let pushNext=false
         while(unmatched.length >1){
-            console.log(unmatched.map(player => player.name))
+            // console.log(unmatched.map(player => player.name))
             pushNext=true
             nextBatch=[]
             let possible=[];
@@ -143,7 +143,16 @@ function Tournament(){
                     if (unmatched[j].points===nextHighest){
                         nextHighestPoints++
                     }
-                    const partner=(Math.floor(Math.random() * nextHighestPoints))+1
+                    let valid=false
+                    let tryCount=0
+                    let partner
+                    while(!valid){
+                        partner=(Math.floor(Math.random() * nextHighestPoints))+1
+                        if(!unmatched[0].opponents.includes(unmatched[partner].name || tryCount>=10)){
+                            valid=true
+                        }
+                        tryCount++
+                    }
                     nextBatch.push({"player1": unmatched[0].name, index1: unmatched[0].index, "player2":unmatched[partner].name, index2: unmatched[partner].index})
                     unmatched.splice(partner, 1)
                     unmatched.splice(0,1)
@@ -154,8 +163,8 @@ function Tournament(){
                 for(let i=0; i<nextBatch.length; i++){
                     console.log(nextBatch)
                     newRound.push({player1: nextBatch[i].player1, player2: nextBatch[i].player2})
-                    // newList[nextBatch[i].index1].opponents.push(nextBatch[i].player2)
-                    // newList[nextBatch[i].index2].opponents.push(nextBatch[i].player1)
+                    newList[nextBatch[i].index1].opponents.push(nextBatch[i].player2)
+                    newList[nextBatch[i].index2].opponents.push(nextBatch[i].player1)
                 }
             }
             console.log("ok")
