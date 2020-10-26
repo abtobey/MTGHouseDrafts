@@ -78,21 +78,63 @@ function Tournament(){
         //get an array of players and their point totals
         let newRound=[]
         let unmatched=[]
+        let newList=playerList;
         for(let i=0; i<playerList.length; i++){
-            unmatched.push({name: playerList[i].name, points:(playerList[i].matchWins*3 + playerList[i].matchDraws), index: i})
+            unmatched.push({name: playerList[i].name, points:(playerList[i].matchWins*3 + playerList[i].matchDraws), opponents: playerList[i].opponents, index: i})
         }
+        console.log("unmatched")
+        console.log(unmatched)
+        let nextBatch=[]
+        let pushNext=false
         while(unmatched.length >1){
+            console.log(unmatched.map(player => player.name))
+            pushNext=true
+            nextBatch=[]
+            let possible=[];
             let samePoints=0;
             for(let i=1; i< unmatched.length; i++){
                 if (unmatched[i].points===unmatched[0].points){
-                    samePoints++
+                    if(!unmatched[0].opponents.includes(unmatched[i].name)){
+                    possible.push(i)
+                }
+                samePoints++
                 }
             }
-            if(samePoints >0){
-                const partner=(Math.floor(Math.random() * samePoints))+1
-                newRound.push({"player1": unmatched[0].name, "player2":unmatched[partner].name})
-                unmatched.splice(partner, 1)
+            if (samePoints<2){
+                pushNext=true;
+            }
+            if(possible.length >0){
+                const partnerIndex=possible[(Math.floor(Math.random() * possible.length))]
+                const partner=unmatched[partnerIndex]
+                nextBatch.push({"player1": unmatched[0].name, index1: unmatched[0].index, "player2":partner.name, index2: partner.index})
+                unmatched.splice(partnerIndex, 1)
                 unmatched.splice(0,1)
+            //if the last two people have already played each other
+            }else if(samePoints >0 && possible.length===0){
+                nextBatch.push({"player1": unmatched[0].name, index1: unmatched[0].index, "player2":unmatched[1].name, index2: unmatched[1].index})
+                unmatched.splice(1, 1)
+                unmatched.splice(0,1)
+                let last=nextBatch.length-1
+                //loop through current matches and see if there are any that can be switched to create valid pairings
+                for(let j=0; j< nextBatch.length; j++){
+                    //if you can switch player1 in match j with the last match
+                    if(!playerList[nextBatch[last].index1].opponents.includes(nextBatch[j].player2) && !playerList[nextBatch[last].index2].opponents.includes(nextBatch[j].player1)){
+                        let temp={player1: nextBatch[last].player1, index1:nextBatch[last].index1}
+                        nextBatch[last].player1=nextBatch[j].player1
+                        nextBatch[last].index1=nextBatch[j].index1
+                        nextBatch[j].player1=temp.player1
+                        nextBatch[j].index1=temp.index1
+                        break;
+                        //if you can switch player2 in match j with the last match
+                    }else if(!playerList[nextBatch[last].index1].opponents.includes(nextBatch[j].player1) && !playerList[nextBatch[last].index2].opponents.includes(nextBatch[j].player2)){
+                        let temp={player1: nextBatch[last].player1, index1:nextBatch[last].index1}
+                        nextBatch[last].player1=nextBatch[j].player2
+                        nextBatch[last].index1=nextBatch[j].index2
+                        nextBatch[j].player2=temp.player1
+                        nextBatch[j].index2=temp.index1
+                        break;
+                    }
+                }
             }else{
                 //if there are no more people with the same amount of points, we have to pair with someone with the next highest amount
                 let nextHighest=unmatched[1].points
@@ -102,19 +144,34 @@ function Tournament(){
                         nextHighestPoints++
                     }
                     const partner=(Math.floor(Math.random() * nextHighestPoints))+1
-                    newRound.push({"player1": unmatched[0].name, "player2":unmatched[partner].name})
+                    nextBatch.push({"player1": unmatched[0].name, index1: unmatched[0].index, "player2":unmatched[partner].name, index2: unmatched[partner].index})
                     unmatched.splice(partner, 1)
                     unmatched.splice(0,1)
                 }
             }
-        }
-        if(unmatched.length===1){
-            newRound.push({"player1": unmatched[0].name, "player2": "Bye"})
-            bye=unmatched[0].index
-            console.log(bye)
-        }
-        console.log(newRound)
-        setMatches(newRound)
+            //now add nextBatch to the match list and update opponents
+            if(pushNext){
+                for(let i=0; i<nextBatch.length; i++){
+                    console.log(nextBatch)
+                    newRound.push({player1: nextBatch[i].player1, player2: nextBatch[i].player2})
+                    // newList[nextBatch[i].index1].opponents.push(nextBatch[i].player2)
+                    // newList[nextBatch[i].index2].opponents.push(nextBatch[i].player1)
+                }
+            }
+            console.log("ok")
+    }
+    if(unmatched.length===1){
+        newRound.push({"player1": unmatched[0].name, "player2": "Bye"})
+        bye=unmatched[0].index
+        console.log(bye)
+    }
+    console.log(newRound)
+    setMatches(newRound)
+    setPlayerList(newList)
+    }
+
+    function pairMatches(list){
+
     }
 
     function updateStandings(id, p1, p2, wins1, wins2){
@@ -127,7 +184,7 @@ function Tournament(){
             }
         }
         setRoundComplete(completeCheck)
-        console.log(matchArray)
+        // console.log(matchArray)
         setMatches(matchArray)
         let points1=0;
         let points2=0;
@@ -154,7 +211,7 @@ function Tournament(){
                 newRound[i].points=points2;
             }
         }
-        console.log(newRound)
+        // console.log(newRound)
         setCurrentRound(newRound)
     }
 
@@ -174,7 +231,7 @@ function Tournament(){
         newStandings.sort((a, b) => {
             return (a.matchWins * 3 + a.matchDraws)>(b.matchWins*3 + b.matchDraws) ? -1 : 1
         })
-        console.log(newStandings)
+        // console.log(newStandings)
         setPlayerList([...playerList],newStandings)
         startNextRound();
     }
