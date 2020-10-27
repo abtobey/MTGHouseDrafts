@@ -87,10 +87,10 @@ function Tournament(){
         let nextBatch=[]
         let pushNext=false
         while(unmatched.length >1){
-            // console.log(unmatched.map(player => player.name))
+            console.log(unmatched.map(player => player.name))
             pushNext=true
             nextBatch=[]
-            let possible=[];
+            let possible=[0];
             let samePoints=0;
             for(let i=1; i< unmatched.length; i++){
                 if (unmatched[i].points===unmatched[0].points){
@@ -100,18 +100,29 @@ function Tournament(){
                 samePoints++
                 }
             }
+            //if this is the last match in the group of players with the same number of points
             if (samePoints<2){
                 pushNext=true;
             }
-            if(possible.length >0){
+            //select a random player because if we start with pairing player 0, it guarantees the person in the first slot won't get a pair down or bye
+            const x=(Math.floor(Math.random() * possible.length))
+            const p1index=possible[x]
+            const p1=unmatched[p1index]
+            possible.splice(x,1)
+            if(possible.length >1){
                 const partnerIndex=possible[(Math.floor(Math.random() * possible.length))]
                 const partner=unmatched[partnerIndex]
-                nextBatch.push({"player1": unmatched[0].name, index1: unmatched[0].index, "player2":partner.name, index2: partner.index})
+                nextBatch.push({"player1": p1.name, index1: p1.index, "player2":partner.name, index2: partner.index})
+                if(partnerIndex> p1index){
                 unmatched.splice(partnerIndex, 1)
-                unmatched.splice(0,1)
-            //if the last two people have already played each other
-            }else if(samePoints >0 && possible.length===0){
-                nextBatch.push({"player1": unmatched[0].name, index1: unmatched[0].index, "player2":unmatched[1].name, index2: unmatched[1].index})
+                unmatched.splice(p1index,1)
+                }else{
+                    unmatched.splice(p1index,1)
+                    unmatched.splice(partnerIndex, 1)
+                }
+            //this will happen if the last two people have already played each other. In this case we see if there is a match we can switch players with to have a valid group of pairings
+            }else if(samePoints >0 && possible.length<=1){
+                nextBatch.push({"player1": p1.name, index1: p1.index, "player2":unmatched[1].name, index2: unmatched[1].index})
                 unmatched.splice(1, 1)
                 unmatched.splice(0,1)
                 let last=nextBatch.length-1
@@ -145,10 +156,11 @@ function Tournament(){
                     }
                     let valid=false
                     let tryCount=0
-                    let partner
-                    while(!valid){
+                    let partner=0
+                    while(!valid && tryCount <10){
+                        console.log(tryCount)
                         partner=(Math.floor(Math.random() * nextHighestPoints))+1
-                        if(!unmatched[0].opponents.includes(unmatched[partner].name || tryCount>=10)){
+                        if(!unmatched[0].opponents.includes(unmatched[partner].name)){
                             valid=true
                         }
                         tryCount++
@@ -162,7 +174,7 @@ function Tournament(){
             if(pushNext){
                 for(let i=0; i<nextBatch.length; i++){
                     console.log(nextBatch)
-                    newRound.push({player1: nextBatch[i].player1, player2: nextBatch[i].player2})
+                    newRound.push({player1: nextBatch[i].player1, player2: nextBatch[i].player2, complete: false})
                     newList[nextBatch[i].index1].opponents.push(nextBatch[i].player2)
                     newList[nextBatch[i].index2].opponents.push(nextBatch[i].player1)
                 }
@@ -249,6 +261,7 @@ function Tournament(){
         <div className="container">
             <h4>Draft ID: {id}</h4>
             <h5>format: {format}</h5>
+            <h5>Round: {roundNum}</h5>
             <div className="row">
             <div className="col-1">
                 ID
