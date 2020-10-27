@@ -191,9 +191,6 @@ function Tournament(){
     setPlayerList(newList)
     }
 
-    function pairMatches(list){
-
-    }
 
     function updateStandings(id, p1, p2, wins1, wins2){
         let matchArray = matches;
@@ -262,7 +259,7 @@ function Tournament(){
             <h4>Draft ID: {id}</h4>
             <h5>format: {format}</h5>
             <h5>Round: {roundNum}</h5>
-            <div className="row">
+            <div className="row standingRow">
             <div className="col-1">
                 ID
             </div>
