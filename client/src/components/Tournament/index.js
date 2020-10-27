@@ -18,7 +18,7 @@ function Tournament(){
     useEffect(() => {
     axios.get("/api/drafts/draft/"+id)
     .then(res =>{
-        // console.log(res.data)
+        console.log(res.data)
         const players=JSON.parse(res.data.players)
         const round=res.data.round
         setRoundNum(round)
@@ -27,6 +27,8 @@ function Tournament(){
         //this is just a placeholder for now, later I will need to add a number of rounds to the database so you can close the browser window
         if(round===1){
         setMatches(firstRoundMatchups(players))
+        }else{
+            setPlayerList(players)
         }
     })
     },[])
@@ -71,8 +73,18 @@ function Tournament(){
         setCurrentRound(blankStandings)
     }
 
+    function saveStandings(roundTemp){
+        axios.put("/api/drafts/draft/"+id, {
+            players: JSON.stringify(playerList),
+            round: roundTemp
+        })
+        .then(res => console.log(res.data))
+    }
+
     //this is for starting any round after round 1
     function startNextRound(){
+        //due to async issues it's easier to just pass through the next round number here than wait for the state to update.
+        saveStandings(roundNum +1)
         setRoundNum(roundNum +1)
         setRoundComplete(false)
         //initialize by as -1, if this remains -1 when this function is done, no bye will be assigned.

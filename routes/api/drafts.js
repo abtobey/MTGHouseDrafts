@@ -22,4 +22,13 @@ router.get("/draft/:_id", (req,res) => {
     .then(data => res.json(data))
     .catch(err => console.log(err))
 })
+
+router.put("/draft/:_id", (req,res) => {
+    Draft.findByIdAndUpdate(
+        req.params._id,
+        {$set: {players: req.body.players, round: req.body.round}}
+    )
+    .then(data => res.json(data))
+    .catch(err => console.log(err))
+})
 module.exports = router;
