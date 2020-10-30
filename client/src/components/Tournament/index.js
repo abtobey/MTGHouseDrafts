@@ -14,12 +14,15 @@ function Tournament(){
     const [roundNum, setRoundNum] =useState(1)
     const [currentRound, setCurrentRound] = useState([])
     const [roundComplete, setRoundComplete] = useState(false)
+    const [swissRounds, setSwissRounds]=useState(1)
 
     useEffect(() => {
     axios.get("/api/drafts/draft/"+id)
     .then(res =>{
         console.log(res.data)
         const players=JSON.parse(res.data.players)
+        const roundCount=Math.floor(Math.log(players.length)/Math.log(2))+1
+        setSwissRounds(roundCount)
         const round=res.data.round
         setRoundNum(round)
         // console.log(players)
@@ -270,7 +273,7 @@ function Tournament(){
         <div className="container">
             <h4>Draft ID: {id}</h4>
             <h5>format: {format}</h5>
-            <h5>Round: {roundNum}</h5>
+            <h5>Round: {roundNum} out of {swissRounds}</h5>
             <div className="row standingRow">
             <div className="col-1">
                 ID
