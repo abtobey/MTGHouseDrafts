@@ -2,6 +2,9 @@
   "name": "mtghousedrafts",
   "version": "1.0.0",
   "description": "",
+  "engines": {
+    "node": "12.x"
+  },
   "main": "server.js",
   "scripts": {
     "client-install": "npm install --prefix client",
