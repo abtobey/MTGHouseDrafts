@@ -22,7 +22,7 @@ function Tournament(){
         console.log(res.data)
         const players=JSON.parse(res.data.players)
         console.log(players)
-        const roundCount=Math.floor(Math.log(players.length)/Math.log(2))+1
+        const roundCount=Math.floor(Math.log(players.length-1)/Math.log(2))+1
         setSwissRounds(roundCount)
         const round=res.data.round
         setRoundNum(round)
@@ -39,6 +39,16 @@ function Tournament(){
             setPlayerList(players)
             //set matchups to the last round saved
             setMatches(matchList)
+            let bye=-1
+            if(matchList[matchList.length-1].player2 ==="Bye"){
+                let byePlayer=matchList[matchList.length-1].player1
+                for(let i=0; i<players.length; i++){
+                    if(players[i].name === byePlayer){
+                        bye=i
+                    }
+                }
+            }
+            initRound(players, bye)
         }
     })
     },[])
@@ -159,7 +169,10 @@ function Tournament(){
                 nextBatch.push({"player1": p1.name, index1: p1.index, "player2":partner.name, index2: partner.index})
                 if(partnerIndex> p1index){
                 unmatched.splice(partnerIndex, 1)
+                console.log("line 162")
+                console.log(unmatched)
                 unmatched.splice(p1index,1)
+                console.log(unmatched)
                 }else{
                     unmatched.splice(p1index,1)
                     unmatched.splice(partnerIndex, 1)
@@ -216,8 +229,8 @@ function Tournament(){
             }
             //now add nextBatch to the match list and update opponents
             if(pushNext){
+                console.log(nextBatch)
                 for(let i=0; i<nextBatch.length; i++){
-                    console.log(nextBatch)
                     newRound.push({player1: nextBatch[i].player1, player2: nextBatch[i].player2, complete: false})
                     newList[nextBatch[i].index1].opponents.push(nextBatch[i].player2)
                     newList[nextBatch[i].index2].opponents.push(nextBatch[i].player1)
@@ -234,7 +247,7 @@ function Tournament(){
     setMatches(newRound)
     setPlayerList(newList)
     saveStandings(newList, newRound, roundNum +1)
-
+    initRound(newList, bye)
     }
 
 
@@ -275,7 +288,7 @@ function Tournament(){
                 newRound[i].points=points2;
             }
         }
-        // console.log(newRound)
+        console.log(newRound)
         setCurrentRound(newRound)
     }
 
