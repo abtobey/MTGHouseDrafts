@@ -7,6 +7,7 @@ const User = require("../../models/User");
 router.post("/draft", (req,res) => {
     const newDraft=new Draft({
         players:req.body.players,
+        matchups:[],
         round: 1,
         format:req.body.format,
         userId:req.body.userId
@@ -26,7 +27,7 @@ router.get("/draft/:_id", (req,res) => {
 router.put("/draft/:_id", (req,res) => {
     Draft.findByIdAndUpdate(
         req.params._id,
-        {$set: {players: req.body.players, round: req.body.round}}
+        {$set: {players: req.body.players, matchups: req.body.matchups, round: req.body.round}}
     )
     .then(data => res.json(data))
     .catch(err => console.log(err))

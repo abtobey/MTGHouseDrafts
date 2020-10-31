@@ -10,6 +10,10 @@ const DraftSchema = new Schema({
     type: String,
     required: true
   }],
+  matchups: [{
+    type: String,
+    required: true
+  }],
   round: {
     type: Number,
     required: true

@@ -21,10 +21,15 @@ function Tournament(){
     .then(res =>{
         console.log(res.data)
         const players=JSON.parse(res.data.players)
+        console.log(players)
         const roundCount=Math.floor(Math.log(players.length)/Math.log(2))+1
         setSwissRounds(roundCount)
         const round=res.data.round
         setRoundNum(round)
+        let matchList=[]
+        if(res.data.matchups.length >0 ){
+        matchList=JSON.parse(res.data.matchups)
+        }
         // console.log(players)
         setFormat(res.data.format)
         //this is just a placeholder for now, later I will need to add a number of rounds to the database so you can close the browser window
@@ -32,6 +37,8 @@ function Tournament(){
         setMatches(firstRoundMatchups(players))
         }else{
             setPlayerList(players)
+            //set matchups to the last round saved
+            setMatches(matchList)
         }
     })
     },[])
@@ -39,6 +46,8 @@ function Tournament(){
     //first round pairs people who would be sitting across the table from each other.
     function firstRoundMatchups(list){
         const playerNames=list.map(item => item.name)
+        console.log("list")
+        console.log(list)
         let matches=[]
         let diff=0;
         let len=list.length
@@ -58,6 +67,7 @@ function Tournament(){
         }
         setPlayerList(list)
         initRound(list, bye)
+        saveStandings(list, matches, 1)
         return matches
     }
 
@@ -76,19 +86,38 @@ function Tournament(){
         setCurrentRound(blankStandings)
     }
 
-    function saveStandings(roundTemp){
+    function saveStandings(players, matchups, roundTemp){
+        console.log(players)
+        console.log("matches")
+        console.log(matchups)
         axios.put("/api/drafts/draft/"+id, {
-            players: JSON.stringify(playerList),
+            players: JSON.stringify(players),
+            matchups: JSON.stringify(matchups),
             round: roundTemp
         })
         .then(res => console.log(res.data))
     }
 
+    function checkIfOver(){
+        if(roundNum === swissRounds){
+            pairTop4()
+        }else{
+            setRoundNum(roundNum +1)    
+            startNextRound()
+        }
+    }
+
+    function pairTop4(){
+        let bracket=[]
+        //pairs first place with 4th and 2nd place with 3rd
+        bracket.push({"player1":playerList[0].name,  "player2": playerList[3].name})
+        bracket.push({"player1":playerList[1].name,  "player2": playerList[2].name})
+        setMatches(bracket)
+    }
+
     //this is for starting any round after round 1
     function startNextRound(){
         //due to async issues it's easier to just pass through the next round number here than wait for the state to update.
-        saveStandings(roundNum +1)
-        setRoundNum(roundNum +1)
         setRoundComplete(false)
         //initialize by as -1, if this remains -1 when this function is done, no bye will be assigned.
         let bye=-1;
@@ -204,6 +233,8 @@ function Tournament(){
     console.log(newRound)
     setMatches(newRound)
     setPlayerList(newList)
+    saveStandings(newList, newRound, roundNum +1)
+
     }
 
 
@@ -266,7 +297,7 @@ function Tournament(){
         })
         // console.log(newStandings)
         setPlayerList([...playerList],newStandings)
-        startNextRound();
+        checkIfOver();
     }
 
     return(
