@@ -15,6 +15,16 @@ class Navbar extends Component {
     console.log(this.props)
     return (
       <nav className="navbar navbar-light bg-light" id="nav">
+        {this.props.auth.isAuthenticated &&
+        <>
+        <li>
+            <Link to="/" className="nav-item">Your Drafts</Link>
+            </li>
+            <li>
+            <Link to="/" className="nav-item">Leaderboard</Link>
+            </li>
+            </>
+        }
         <a className="heading">MTG House Drafts</a>
         <form className="form-inline">
           {this.props.auth.isAuthenticated &&
