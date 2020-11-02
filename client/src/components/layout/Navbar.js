@@ -13,12 +13,13 @@ class Navbar extends Component {
   
   render() {
     console.log(this.props)
+    const userId=this.props.auth.user.id
     return (
       <nav className="navbar navbar-light bg-light" id="nav">
         {this.props.auth.isAuthenticated &&
         <>
         <li>
-            <Link to="/" className="nav-item">Your Drafts</Link>
+            <Link to={"/saveddrafts/" + userId} className="nav-item">Your Drafts</Link>
             </li>
             <li>
             <Link to="/" className="nav-item">Leaderboard</Link>
@@ -32,7 +33,7 @@ class Navbar extends Component {
         </form>
       </nav>
     );
-  }
+  }s
 }
 Navbar.propTypes = {
   logoutUser: PropTypes.func.isRequired,
