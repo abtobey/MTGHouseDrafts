@@ -32,6 +32,7 @@ function AddPlayer(props){
         setPlayers([...players, formObject.player])
         }
         setFormObject({...formObject, player: ""})
+        document.getElementById("player").focus()
     }
     function removePlayer(e){
         let i=e.target.id

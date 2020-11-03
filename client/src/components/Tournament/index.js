@@ -32,10 +32,17 @@ function Tournament(){
         }
         // console.log(players)
         setFormat(res.data.format)
-        //this is just a placeholder for now, later I will need to add a number of rounds to the database so you can close the browser window
         if(round===1){
         setMatches(firstRoundMatchups(players))
-        }else{
+        }else if(round === roundCount+1){
+            setPlayerList(players)
+            pairTop4(players)
+        }
+        else if(round === roundCount+2){
+            setPlayerList(players)
+            pairFinals(players)
+        }
+        else{
             setPlayerList(players)
             //set matchups to the last round saved
             setMatches(matchList)
@@ -109,20 +116,43 @@ function Tournament(){
     }
 
     function checkIfOver(){
+        setRoundNum(roundNum +1)    
         if(roundNum === swissRounds){
-            pairTop4()
-        }else{
-            setRoundNum(roundNum +1)    
+            pairTop4([])
+        }else if(roundNum >swissRounds){
+            pairFinals([])
+        }
+        else   {
             startNextRound()
         }
     }
 
-    function pairTop4(){
+    function pairTop4(list){
+        let playerArray=[]
+        if(playerList.length===0){
+            playerArray=list
+        }else{
+            playerArray=playerList
+        }
         let bracket=[]
         //pairs first place with 4th and 2nd place with 3rd
-        bracket.push({"player1":playerList[0].name,  "player2": playerList[3].name})
-        bracket.push({"player1":playerList[1].name,  "player2": playerList[2].name})
+        bracket.push({"player1":playerArray[0].name,  "player2": playerArray[3].name})
+        bracket.push({"player1":playerArray[1].name,  "player2": playerArray[2].name})
         setMatches(bracket)
+        setRoundComplete(false)
+    }
+    function pairFinals(list){
+        let playerArray=[]
+        if(playerList.length===0){
+            playerArray=list
+        }else{
+            playerArray=playerList
+        }
+        let bracket=[]
+        //pairs first place with 4th and 2nd place with 3rd
+        bracket.push({"player1":playerArray[0].name,  "player2": playerArray[1].name})
+        setMatches(bracket)
+        setRoundComplete(false)
     }
 
     //this is for starting any round after round 1
