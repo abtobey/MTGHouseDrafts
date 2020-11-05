@@ -8,6 +8,7 @@ router.post("/draft", (req,res) => {
     const newDraft=new Draft({
         players:req.body.players,
         matchups:[],
+        finlists:[],
         round: 1,
         format:req.body.format,
         userId:req.body.userId

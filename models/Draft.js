@@ -14,6 +14,10 @@ const DraftSchema = new Schema({
     type: String,
     required: true
   }],
+  finalists: [{
+    type: String,
+    required: false
+  }],
   round: {
     type: Number,
     required: true

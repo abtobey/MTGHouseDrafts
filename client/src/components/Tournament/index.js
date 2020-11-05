@@ -15,6 +15,7 @@ function Tournament(){
     const [currentRound, setCurrentRound] = useState([])
     const [roundComplete, setRoundComplete] = useState(false)
     const [swissRounds, setSwissRounds]=useState(1)
+    const [finalists, setFinalists] =useState([])
 
     useEffect(() => {
     axios.get("/api/drafts/draft/"+id)
@@ -40,7 +41,6 @@ function Tournament(){
         }
         else if(round === roundCount+2){
             setPlayerList(players)
-            pairFinals(players)
         }
         else{
             setPlayerList(players)
@@ -119,8 +119,6 @@ function Tournament(){
         setRoundNum(roundNum +1)    
         if(roundNum === swissRounds){
             pairTop4([])
-        }else if(roundNum >swissRounds){
-            pairFinals([])
         }
         else   {
             startNextRound()
@@ -136,24 +134,14 @@ function Tournament(){
         }
         let bracket=[]
         //pairs first place with 4th and 2nd place with 3rd
-        bracket.push({"player1":playerArray[0].name,  "player2": playerArray[3].name})
-        bracket.push({"player1":playerArray[1].name,  "player2": playerArray[2].name})
+        bracket.push({"player1":playerArray[0].name,  "player2": playerArray[3].name, complete: false})
+        bracket.push({"player1":playerArray[1].name,  "player2": playerArray[2].name, complete: false})
         setMatches(bracket)
+        //-1 hardcoded into bye since there won'e be bye in top 4
+        initRound(playerArray.slice(0,4), -1)
         setRoundComplete(false)
     }
-    function pairFinals(list){
-        let playerArray=[]
-        if(playerList.length===0){
-            playerArray=list
-        }else{
-            playerArray=playerList
-        }
-        let bracket=[]
-        //pairs first place with 4th and 2nd place with 3rd
-        bracket.push({"player1":playerArray[0].name,  "player2": playerArray[1].name})
-        setMatches(bracket)
-        setRoundComplete(false)
-    }
+
 
     //this is for starting any round after round 1
     function startNextRound(){
@@ -193,13 +181,13 @@ function Tournament(){
             const p1index=possible[x]
             const p1=unmatched[p1index]
             possible.splice(x,1)
-            if(possible.length >1){
+            console.log(possible)
+            if(possible.length >0){
                 const partnerIndex=possible[(Math.floor(Math.random() * possible.length))]
                 const partner=unmatched[partnerIndex]
                 nextBatch.push({"player1": p1.name, index1: p1.index, "player2":partner.name, index2: partner.index})
                 if(partnerIndex> p1index){
                 unmatched.splice(partnerIndex, 1)
-                console.log("line 162")
                 console.log(unmatched)
                 unmatched.splice(p1index,1)
                 console.log(unmatched)
@@ -266,7 +254,6 @@ function Tournament(){
                     newList[nextBatch[i].index2].opponents.push(nextBatch[i].player1)
                 }
             }
-            console.log("ok")
     }
     if(unmatched.length===1){
         newRound.push({"player1": unmatched[0].name, "player2": "Bye"})
@@ -276,7 +263,7 @@ function Tournament(){
     console.log(newRound)
     setMatches(newRound)
     setPlayerList(newList)
-    saveStandings(newList, newRound, roundNum +1)
+    // saveStandings(newList, newRound, roundNum +1)
     initRound(newList, bye)
     }
 
@@ -322,6 +309,17 @@ function Tournament(){
         setCurrentRound(newRound)
     }
 
+    function populateFinals(){
+        let winners=[]
+        for(let i=0; i<currentRound.length; i++){
+            if(currentRound[i].points === 3){
+                winners.push(playerList[i].name)
+            }
+        }
+        console.log(winners)
+        setFinalists(winners)
+    }
+
     function finishRound(){
         let newStandings=playerList;
         for(let i=0; i<currentRound.length; i++){
@@ -334,6 +332,9 @@ function Tournament(){
             }else if(currentRound[i].points===0){
                 newStandings[i].matchLosses+=1;
             }
+        }
+        if(roundNum===swissRounds + 1){
+            populateFinals()
         }
         newStandings.sort((a, b) => {
             return (a.matchWins * 3 + a.matchDraws)>(b.matchWins*3 + b.matchDraws) ? -1 : 1
@@ -383,7 +384,8 @@ function Tournament(){
             gameLosses={player.gameLosses}
             id={player.id}
             key={player.id} />)}
-            {matches.map((match, i) => <Match key={roundNum + " " +i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
+            {finalists.length===0 && matches.map((match, i) => <Match key={roundNum + " " +i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
+            {finalists.length===2 && <Match  id="finals"  player1={finalists[0]} player2={finalists[1]}/>}
             {roundComplete && <button onClick={finishRound}>Finish Round</button>}
         </div>
 
