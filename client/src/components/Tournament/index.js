@@ -79,8 +79,11 @@ function Tournament(){
         }
         for(let i=0; i<diff; i++){
             matches.push({player1: playerNames[i], player2: playerNames[i+diff], complete: false})
-            list[i].opponents.push(playerNames[i+diff])
-            list[i+diff].opponents.push(playerNames[i])
+            //do not add to opponents list if we are reloading a draft already created.
+            if(list[i].opponents.length===0){
+                list[i].opponents.push(playerNames[i+diff])
+                list[i+diff].opponents.push(playerNames[i])
+            }
         }
         setPlayerList(list)
         initRound(list, bye)
@@ -263,7 +266,7 @@ function Tournament(){
     console.log(newRound)
     setMatches(newRound)
     setPlayerList(newList)
-    // saveStandings(newList, newRound, roundNum +1)
+    saveStandings(newList, newRound, roundNum +1)
     initRound(newList, bye)
     }
 
@@ -344,6 +347,24 @@ function Tournament(){
         checkIfOver();
     }
 
+    function oppMatchWin(i){
+        let oppWins=0;
+        let oppMatches=0;
+        //remove last item from opponents array since that's the current opponent who shouldn't be counted yet
+        let prevOpps=playerList[i].opponents.slice(0, playerList[i].opponents.length-1)
+        for(let j=0; j<playerList.length; j++){
+            if(prevOpps.includes(playerList[j].name)){
+                oppWins += playerList[j].matchWins
+                oppMatches += playerList[j].matchWins + playerList[j].matchLosses
+            }
+        }
+        if (oppMatches===0){
+            return 0
+        }else{
+            return oppWins/oppMatches
+        }
+    }
+
     return(
         <div className="container">
             <h4>Draft ID: {id}</h4>
@@ -374,6 +395,9 @@ function Tournament(){
             <div className="col-1">
                 Game losses
             </div>
+            <div className="col-1">
+                Opp. Win %
+            </div>
         </div>
             {playerList.map((player, i) => <Standings 
             playerName={player.name}
@@ -382,6 +406,7 @@ function Tournament(){
             matchLosses={player.matchLosses}
             gameWins={player.gameWins}
             gameLosses={player.gameLosses}
+            oppWinPercent={oppMatchWin(i)}
             id={player.id}
             key={player.id} />)}
             {finalists.length===0 && matches.map((match, i) => <Match key={roundNum + " " +i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}

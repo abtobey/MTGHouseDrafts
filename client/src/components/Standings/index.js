@@ -28,6 +28,9 @@ function Standings(props){
             <div className="col-1">
                 {props.gameLosses}
             </div>
+            <div className="col-1">
+                {(props.oppWinPercent*100).toFixed(2) + "%"}
+            </div>
         </div>
     )
 
