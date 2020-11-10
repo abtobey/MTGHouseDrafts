@@ -62,6 +62,7 @@ function AddPlayer(props){
                 matchLosses: 0,
                 gameLosses: 0,
                 matchDraws: 0,
+                oppWinRate: 0,
                 opponents:[]
             })
         }

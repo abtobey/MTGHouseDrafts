@@ -336,9 +336,20 @@ function Tournament(){
                 newStandings[i].matchLosses+=1;
             }
         }
+        for(let i=0; i<currentRound.length; i++){
+            newStandings[i].oppWinRate=oppMatchWin(i)
+        }
         if(roundNum===swissRounds + 1){
             populateFinals()
         }
+        //sort by game win %, opp match win % then points
+
+        newStandings.sort((a, b) => {
+            return (a.gameWins/(a.gameWins+a.gameLosses))>(a.gameWins/(a.gameWins+a.gameLosses)) ? -1 : 1
+        })
+        newStandings.sort((a, b) => {
+            return (a.oppWinRate)>(b.oppWinRate) ? -1 : 1
+        })
         newStandings.sort((a, b) => {
             return (a.matchWins * 3 + a.matchDraws)>(b.matchWins*3 + b.matchDraws) ? -1 : 1
         })
@@ -350,8 +361,12 @@ function Tournament(){
     function oppMatchWin(i){
         let oppWins=0;
         let oppMatches=0;
+        let thisPlayer=playerList[i]
         //remove last item from opponents array since that's the current opponent who shouldn't be counted yet
-        let prevOpps=playerList[i].opponents.slice(0, playerList[i].opponents.length-1)
+        if(!thisPlayer.opponents){
+            return 0;
+        }
+        let prevOpps=thisPlayer.opponents.slice(0, thisPlayer.opponents.length-1)
         for(let j=0; j<playerList.length; j++){
             if(prevOpps.includes(playerList[j].name)){
                 oppWins += playerList[j].matchWins
@@ -406,7 +421,7 @@ function Tournament(){
             matchLosses={player.matchLosses}
             gameWins={player.gameWins}
             gameLosses={player.gameLosses}
-            oppWinPercent={oppMatchWin(i)}
+            oppWinPercent={player.oppWinRate || 0}
             id={player.id}
             key={player.id} />)}
             {finalists.length===0 && matches.map((match, i) => <Match key={roundNum + " " +i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
