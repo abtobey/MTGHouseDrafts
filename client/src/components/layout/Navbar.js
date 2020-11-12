@@ -24,6 +24,8 @@ class Navbar extends Component {
             <li>
             <Link to={"/leaderboard/" + userId} className="nav-item">Leaderboard</Link>
             </li>
+            <Link to="/" className="nav-item">Home</Link>
+            </li>
             </>
         }
         <a className="heading">MTG House Drafts</a>
