@@ -113,6 +113,7 @@ function Tournament(){
         axios.put("/api/drafts/draft/"+id, {
             players: JSON.stringify(players),
             matchups: JSON.stringify(matchups),
+            finalists: JSON.stringify(finalists),
             round: roundTemp
         })
         .then(res => console.log(res.data))
@@ -320,7 +321,13 @@ function Tournament(){
             }
         }
         console.log(winners)
+        setMatches({"player1":winners[0], "player2":winners[1], "complete": false})
         setFinalists(winners)
+    }
+
+    function finishDraft(){
+        let finalMatchups=({"player1":finalists[0], "player2":finalists[1]})
+        saveStandings(playerList, finalMatchups, roundNum )
     }
 
     function finishRound(){
@@ -362,11 +369,10 @@ function Tournament(){
         let oppWins=0;
         let oppMatches=0;
         let thisPlayer=playerList[i]
-        //remove last item from opponents array since that's the current opponent who shouldn't be counted yet
         if(!thisPlayer.opponents){
             return 0;
         }
-        let prevOpps=thisPlayer.opponents.slice(0, thisPlayer.opponents.length-1)
+        let prevOpps=thisPlayer.opponents
         for(let j=0; j<playerList.length; j++){
             if(prevOpps.includes(playerList[j].name)){
                 oppWins += playerList[j].matchWins
@@ -425,7 +431,7 @@ function Tournament(){
             id={player.id}
             key={player.id} />)}
             {finalists.length===0 && matches.map((match, i) => <Match key={roundNum + " " +i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
-            {finalists.length===2 && <Match  id="finals"  player1={finalists[0]} player2={finalists[1]}/>}
+            {finalists.length===2 && <Match  id="finals" onClick={finishDraft} player1={finalists[0]} player2={finalists[1]}/>}
             {roundComplete && <button onClick={finishRound}>Finish Round</button>}
         </div>
 

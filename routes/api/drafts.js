@@ -28,7 +28,7 @@ router.get("/draft/:_id", (req,res) => {
 router.put("/draft/:_id", (req,res) => {
     Draft.findByIdAndUpdate(
         req.params._id,
-        {$set: {players: req.body.players, matchups: req.body.matchups, round: req.body.round}}
+        {$set: {players: req.body.players, matchups: req.body.matchups, round: req.body.round, finalists: req.body.finalists}}
     )
     .then(data => res.json(data))
     .catch(err => console.log(err))
