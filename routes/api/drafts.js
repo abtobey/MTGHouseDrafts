@@ -40,4 +40,10 @@ router.get("/saveddrafts/:_id", (req,res) =>{
     .catch(err => console.log(err))
 })
 
+router.get("/stats/:_id", (req,res) => {
+    Draft.find({userId:req.params._id})
+    .then(data => res.json(data.map(draft => ({format: draft.format, date: draft.date, players: JSON.parse(draft.players)}))))
+    .catch(err => console.log(err))
+})
+
 module.exports = router;

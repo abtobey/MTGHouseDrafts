@@ -22,7 +22,7 @@ class Navbar extends Component {
             <Link to={"/saveddrafts/" + userId} className="nav-item">Your Drafts</Link>
             </li>
             <li>
-            <Link to="/" className="nav-item">Leaderboard</Link>
+            <Link to={"/leaderboard/" + userId} className="nav-item">Leaderboard</Link>
             </li>
             </>
         }

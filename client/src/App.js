@@ -13,6 +13,7 @@ import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 import Tournament from "./components/Tournament"
 import PastDrafts from "./components/PastDrafts"
+import Leaderboard from "./components/Leaderboard"
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
   // Set auth token header auth
@@ -45,6 +46,7 @@ class App extends Component {
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
               <PrivateRoute exact path="/tournament/:id" component={Tournament} />
               <PrivateRoute exact path="/saveddrafts/:id" component={PastDrafts} />
+              <PrivateRoute exact path="/leaderboard/:id" component={Leaderboard} />
             </Switch>
           </div>
         </Router>
