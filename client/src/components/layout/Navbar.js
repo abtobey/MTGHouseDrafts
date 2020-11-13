@@ -24,6 +24,7 @@ class Navbar extends Component {
             <li>
             <Link to={"/leaderboard/" + userId} className="nav-item">Leaderboard</Link>
             </li>
+            <li>
             <Link to="/" className="nav-item">Home</Link>
             </li>
             </>
