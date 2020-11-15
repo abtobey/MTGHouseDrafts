@@ -1,0 +1,21 @@
+.leaderboardRow:nth-of-type(odd){
+    background-color:#DDDDDD;
+}
+.leaderboardRow:nth-of-type(even){
+    background-color:white;
+}
+.leaderboardRow{
+    margin-top:0;
+    margin-bottom:0;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align:center;
+}
+@media screen and (max-width: 640px) {
+.leaderboardRow{
+    font-size: 1.5vh;
+}
+  }
+  

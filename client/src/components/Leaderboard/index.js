@@ -82,6 +82,30 @@ function Leaderboard(){
 
     return(
         <div className="container">
+            <div className="row leaderboardRow">
+            <div className="playerName col-2">
+                Name
+            </div>
+            <div className="col-1">
+                Points
+            </div>
+            <div className="col-1">
+                Match Wins
+            </div>
+            <div className="col-1">
+                Match Losses
+            </div>
+            <div className="col-1">
+                Draws
+            </div>
+            <div className="col-1">
+                Game Wins
+            </div>
+            <div className="col-1">
+                Game Losses
+            </div>
+
+        </div>
            { statsArray.map((player, i) => (
                <LeaderboardItem key={i}
                playerName={player.playerName}
