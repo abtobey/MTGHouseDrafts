@@ -432,7 +432,7 @@ function Tournament(){
             key={player.id} />)}
             {finalists.length===0 && matches.map((match, i) => <Match key={roundNum + " " +i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
             {finalists.length===2 && <Match  id="finals" onClick={finishDraft} player1={finalists[0]} player2={finalists[1]}/>}
-            {roundComplete && <button onClick={finishRound}>Finish Round</button>}
+            {roundComplete && <button className="btn btn-primary waves-effect waves-light hoverable accent-3" onClick={finishRound}>Finish Round</button>}
         </div>
 
     )
