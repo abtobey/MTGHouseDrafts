@@ -20,7 +20,7 @@ function PastDrafts(){
     },[])
     return(
         <div className="container">
-                <div className="row">
+                <div className="row pastDraft">
                     <div className="col-3">
                         ID
                     </div>
@@ -38,7 +38,7 @@ function PastDrafts(){
                     </div>
                 </div>
             {draftList.map((draft, i) =>(
-                <div className="row" key={i}>
+                <div className="row pastDraft" key={i}>
                     <div className="col-3">
                         <Link to={"/tournament/"+draft.id}>{draft.id}</Link>
                     </div>

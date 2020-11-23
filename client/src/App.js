@@ -14,6 +14,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import Tournament from "./components/Tournament"
 import PastDrafts from "./components/PastDrafts"
 import Leaderboard from "./components/Leaderboard"
+
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
   // Set auth token header auth
