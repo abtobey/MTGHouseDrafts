@@ -136,6 +136,7 @@ function AddPlayer(props){
                   }}
                   onClick={startDraft}
                   type="submit"
+                  id="addPlayerBtn"
                   className="btn btn-large waves-effect waves-light hoverable green accent-3"
                 >
                   Start Draft

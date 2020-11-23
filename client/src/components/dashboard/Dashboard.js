@@ -16,7 +16,7 @@ return (
         <div className="row">
           <div className="col s12 center-align">
             <h4>
-              <b>Hello,</b> {user.name}
+              <b>Logged in as</b> {user.name}
               <p className="flow-text grey-text text-darken-1">
                 Welcome to MTG House Drafts
               </p>

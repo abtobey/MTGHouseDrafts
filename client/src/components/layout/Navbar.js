@@ -27,13 +27,12 @@ class Navbar extends Component {
             <li>
             <Link to="/" className="nav-item">Home</Link>
             </li>
+            <li>
+            <Link  to="/" onClick={this.onLogoutClick} className="nav-item">Logout</Link>
+            </li>
             </>
         }
         <a className="heading">MTG House Drafts</a>
-        <form className="form-inline">
-          {this.props.auth.isAuthenticated &&
-          <button onClick={this.onLogoutClick} className="btn btn-primary waves-effect waves-light hoverable accent-3" type="submit">Logout</button>}
-        </form>
       </nav>
     );
   }s

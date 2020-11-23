@@ -13,3 +13,12 @@
 a.nav-item{
     color:black;
 }
+@media screen and (max-width: 640px) {
+    .nav-item{
+        margin-left: 3px;
+        margin-right:3px;
+    }
+    .heading{
+        visibility: hidden;
+    }
+  }

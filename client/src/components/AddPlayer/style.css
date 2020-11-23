@@ -17,8 +17,8 @@
 .playerName{
     text-align:left;
 }
-button{
-    margin:auto
+#addPlayerBtn{
+    left:50%
 }
 @media screen and (max-width: 640px) {
     .playerEntry{
