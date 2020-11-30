@@ -16,7 +16,7 @@ class Navbar extends Component {
     const userId=this.props.auth.user.id
     return (
       <nav className="navbar navbar-light bg-light" id="nav">
-        {this.props.auth.isAuthenticated &&
+        {this.props.auth.isAuthenticated ?
         <>
         <li>
             <Link to={"/saveddrafts/" + userId} className="nav-item">Your Drafts</Link>
@@ -30,9 +30,12 @@ class Navbar extends Component {
             <li>
             <Link  to="/" onClick={this.onLogoutClick} className="nav-item">Logout</Link>
             </li>
+            <a className="heading">MTG House Drafts</a>
             </>
+            :
+            <a className="loggedOutHeading">MTG House Drafts</a>
+
         }
-        <a className="heading">MTG House Drafts</a>
       </nav>
     );
   }s

@@ -39,8 +39,8 @@ function PastDrafts(){
                 </div>
             {draftList.map((draft, i) =>(
                 <div className="row pastDraft" key={i}>
-                    <div className="col-3">
-                        <Link to={"/tournament/"+draft.id}>{draft.id}</Link>
+                    <div className="desktop col-3">
+                        <Link to={"/tournament/"+draft.id}><span className="desktop">{draft.id}</span><span className="mobile">{draft.id.slice(0,5)+"..."}</span></Link>
                     </div>
                     <div className="col-2">
                         {moment(draft.date).format("MM/DD/YYYY h:mm")}

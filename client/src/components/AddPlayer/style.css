@@ -17,9 +17,7 @@
 .playerName{
     text-align:left;
 }
-#addPlayerBtn{
-    left:50%
-}
+
 @media screen and (max-width: 640px) {
     .playerEntry{
         width: 100%

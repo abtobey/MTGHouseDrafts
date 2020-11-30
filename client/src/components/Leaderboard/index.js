@@ -82,7 +82,7 @@ function Leaderboard(){
 
     return(
         <div className="container">
-            <div className="row leaderboardRow">
+            <div className="row headerRow leaderboardRow">
             <div className="playerName col-2">
                 Name
             </div>

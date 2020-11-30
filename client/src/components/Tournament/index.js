@@ -391,7 +391,7 @@ function Tournament(){
             <h4>Draft ID: {id}</h4>
             <h5>format: {format}</h5>
             <h5>Round: {roundNum} out of {swissRounds}</h5>
-            <div className="row standingRow">
+            <div className="row headerRow standingRow">
             <div className="col-1">
                 ID
             </div>
@@ -416,7 +416,7 @@ function Tournament(){
             <div className="col-1">
                 Game losses
             </div>
-            <div className="col-1">
+            <div className="col-2">
                 Opp. Win %
             </div>
         </div>

@@ -13,9 +13,21 @@
     align-items: center;
     text-align:center;
 }
+.mobile{
+    visibility:hidden;
+    font-size: 0px;
+}
 @media screen and (max-width: 640px) {
 .pastDraft{
     font-size: 1.5vh;
+}
+.mobile{
+    visibility: visible;
+    font-size: 10px;
+}
+.desktop{
+    visibility:hidden;
+    font-size:0px;
 }
   }
   

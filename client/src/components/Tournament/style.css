@@ -2,3 +2,14 @@
    left:40%
 
 }
+
+@media screen and (max-width: 640px) {
+   .headerRow{
+      font-weight: bold;
+      border: 1px solid black;
+   }
+   .headerRow div{
+      font-size: 6px;
+
+   }
+ }

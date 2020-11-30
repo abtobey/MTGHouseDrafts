@@ -1,4 +1,4 @@
-.heading{
+.heading, .loggedOutHeading{
     color:black;
     margin: auto;
     font-size: 30px;
@@ -20,5 +20,8 @@ a.nav-item{
     }
     .heading{
         visibility: hidden;
+    }
+    .loggedOutHeading{
+        visibility: visible;
     }
   }
