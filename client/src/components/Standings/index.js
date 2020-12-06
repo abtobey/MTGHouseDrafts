@@ -1,7 +1,15 @@
-import React from "react"
+import React, {useState} from "react"
 import "./style.css"
 
 function Standings(props){
+
+    const [drop, setDrop] =useState(props.dropped)
+
+    function dropButton(){
+        setDrop(!drop)
+        props.toggleDrop(props.index)
+    }
+
     return(
         <div className="row standingRow">
             <div className="col-1">
@@ -30,6 +38,9 @@ function Standings(props){
             </div>
             <div className="col-2">
                 {(props.oppWinPercent*100).toFixed(2) + "%"}
+            </div>
+            <div className="col-1" onClick={dropButton}>
+                {drop? "un-drop" : "drop"}
             </div>
         </div>
     )

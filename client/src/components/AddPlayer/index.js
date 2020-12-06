@@ -63,7 +63,8 @@ function AddPlayer(props){
                 gameLosses: 0,
                 matchDraws: 0,
                 oppWinRate: 0,
-                opponents:[]
+                opponents:[],
+                dropped: false
             })
         }
         return JSON.stringify(playerObjects)

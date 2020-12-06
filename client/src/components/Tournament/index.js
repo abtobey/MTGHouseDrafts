@@ -156,9 +156,9 @@ function Tournament(){
         //get an array of players and their point totals
         let newRound=[]
         let unmatched=[]
-        let newList=playerList;
-        for(let i=0; i<playerList.length; i++){
-            unmatched.push({name: playerList[i].name, points:(playerList[i].matchWins*3 + playerList[i].matchDraws), opponents: playerList[i].opponents, index: i})
+        let newList=playerList.filter(player => !player.dropped);
+        for(let i=0; i<newList.length; i++){
+            unmatched.push({name: newList[i].name, points:(newList[i].matchWins*3 + newList[i].matchDraws), opponents: newList[i].opponents, index: i})
         }
         let nextBatch=[]
         let pushNext=false
@@ -386,6 +386,16 @@ function Tournament(){
         }
     }
 
+    function toggleDrop(i){
+        let newList=playerList
+        if(!newList[i].dropped){
+            newList[i].dropped=true
+        }else{
+            newList[i].dropped=false
+        }
+        setPlayerList(newList)
+    }
+
     return(
         <div className="container">
             <h4>Draft ID: {id}</h4>
@@ -419,6 +429,9 @@ function Tournament(){
             <div className="col-2">
                 Opp. Win %
             </div>
+            <div className="col-1">
+                Drop
+            </div>
         </div>
             {playerList.map((player, i) => <Standings 
             playerName={player.name}
@@ -429,7 +442,10 @@ function Tournament(){
             gameLosses={player.gameLosses}
             oppWinPercent={player.oppWinRate || 0}
             id={player.id}
-            key={player.id} />)}
+            key={player.id}
+            index={i}
+            dropped={player.dropped || false} 
+            toggleDrop={toggleDrop}/>)}
             {finalists.length===0 && matches.map((match, i) => <Match key={roundNum + " " +i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
             {finalists.length===2 && <Match  id="finals" onClick={finishDraft} player1={finalists[0]} player2={finalists[1]}/>}
             {roundComplete && <button className="btn finishBtn btn-primary waves-effect waves-light hoverable accent-3" onClick={finishRound}>Finish Round</button>}
