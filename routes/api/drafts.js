@@ -9,6 +9,7 @@ router.post("/draft", (req,res) => {
         players:req.body.players,
         matchups:[],
         finlists:[],
+        roundSnapshots:[],
         round: 1,
         format:req.body.format,
         userId:req.body.userId
@@ -28,7 +29,7 @@ router.get("/draft/:_id", (req,res) => {
 router.put("/draft/:_id", (req,res) => {
     Draft.findByIdAndUpdate(
         req.params._id,
-        {$set: {players: req.body.players, matchups: req.body.matchups, round: req.body.round, finalists: req.body.finalists}}
+        {$set: {players: req.body.players, matchups: req.body.matchups, round: req.body.round, finalists: req.body.finalists, roundSnapshots: req.body.roundSnapshots}}
     )
     .then(data => res.json(data))
     .catch(err => console.log(err))

@@ -18,6 +18,10 @@ const DraftSchema = new Schema({
     type: String,
     required: false
   }],
+  roundSnapshots: [{
+    type: String,
+    required: false
+  }],
   round: {
     type: Number,
     required: true

@@ -8,6 +8,7 @@ import Standings from "../Standings"
 function Tournament(){
     const id=useParams().id
 
+    const [pastRounds, setPastRounds] = useState([])
     const [playerList, setPlayerList] =useState([])
     const [format, setFormat] =useState("")
     const [matches, setMatches] =useState([])
@@ -27,6 +28,10 @@ function Tournament(){
         setSwissRounds(roundCount)
         const round=res.data.round
         setRoundNum(round)
+        if(res.data.roundSnapshots.length >0){
+            let pastTemp=JSON.parse(res.data.roundSnapshots)
+            setPastRounds(pastTemp)
+        }
         let matchList=[]
         if(res.data.matchups.length >0 ){
         matchList=JSON.parse(res.data.matchups)
@@ -110,11 +115,21 @@ function Tournament(){
         console.log(players)
         console.log("matches")
         console.log(matchups)
+        //need to use parameters and not state here to solve synchronicity issues
+        const thisRound={
+            matches: matchups,
+            playerList: players,
+            roundNum: roundTemp,
+        }
+        let pastTemp=pastRounds
+        pastTemp.push(thisRound)
+        setPastRounds(pastTemp)
         axios.put("/api/drafts/draft/"+id, {
             players: JSON.stringify(players),
             matchups: JSON.stringify(matchups),
             finalists: JSON.stringify(finalists),
-            round: roundTemp
+            round: roundTemp,
+            roundSnapshots: JSON.stringify(pastTemp)
         })
         .then(res => console.log(res.data))
     }
