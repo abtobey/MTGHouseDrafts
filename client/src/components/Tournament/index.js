@@ -4,6 +4,7 @@ import axios from "axios"
 import {useParams} from "react-router-dom"
 import Match from "../Match"
 import Standings from "../Standings"
+import BackWarning from "../backWarning"
 
 function Tournament(){
     const id=useParams().id
@@ -17,6 +18,7 @@ function Tournament(){
     const [roundComplete, setRoundComplete] = useState(false)
     const [swissRounds, setSwissRounds]=useState(1)
     const [finalists, setFinalists] =useState([])
+    const [backWarning, setBackWarning] = useState(false)
 
     useEffect(() => {
     axios.get("/api/drafts/draft/"+id)
@@ -411,6 +413,18 @@ function Tournament(){
         setPlayerList(newList)
     }
 
+    function clickBack(){
+        if(backWarning){
+            setBackWarning(false)
+        }else{
+            setBackWarning(true)
+        }
+    }
+
+    function goBack(){
+        console.log("previous round")
+    }
+
     return(
         <div className="container">
             <h4>Draft ID: {id}</h4>
@@ -464,6 +478,8 @@ function Tournament(){
             {finalists.length===0 && matches.map((match, i) => <Match key={roundNum + " " +i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
             {finalists.length===2 && <Match  id="finals" onClick={finishDraft} player1={finalists[0]} player2={finalists[1]}/>}
             {roundComplete && <button className="btn finishBtn btn-primary waves-effect waves-light hoverable accent-3" onClick={finishRound}>Finish Round</button>}
+            {roundNum >1 && <button className="btn finishBtn btn-primary waves-effect waves-light hoverable accent-3" onClick={clickBack}>Go Back</button>}
+            {backWarning && <BackWarning roundNum={roundNum} goBack={goBack} clickBack={clickBack}/>}
         </div>
 
     )
