@@ -9,7 +9,6 @@ import BackWarning from "../backWarning"
 function Tournament(){
     const id=useParams().id
 
-    const [pastRounds, setPastRounds] = useState([])
     const [playerList, setPlayerList] =useState([])
     const [format, setFormat] =useState("")
     const [matches, setMatches] =useState([])
@@ -19,13 +18,14 @@ function Tournament(){
     const [swissRounds, setSwissRounds]=useState(1)
     const [finalists, setFinalists] =useState([])
     const [backWarning, setBackWarning] = useState(false)
+    const [pastRounds, setPastRounds]= useState([])
 
     useEffect(() => {
     axios.get("/api/drafts/draft/"+id)
     .then(res =>{
-        console.log(res.data)
+        // console.log(res.data)
         const players=JSON.parse(res.data.players)
-        console.log(players)
+        // console.log(players)
         const roundCount=Math.floor(Math.log(players.length-1)/Math.log(2))+1
         setSwissRounds(roundCount)
         const round=res.data.round
@@ -70,7 +70,7 @@ function Tournament(){
     //first round pairs people who would be sitting across the table from each other.
     function firstRoundMatchups(list){
         const playerNames=list.map(item => item.name)
-        console.log("list")
+        const newList=list.map(item => item)
         console.log(list)
         let matches=[]
         let diff=0;
@@ -98,10 +98,25 @@ function Tournament(){
         return matches
     }
 
+    function addPastRound(matchups, list, n, current){
+        let thisRound={
+            matches: matchups,
+            playerListSnap: list,
+            currentRound: current,
+            roundNum: n,
+        }
+        console.log(thisRound)
+        let pastTemp=pastRounds
+        pastTemp.push(thisRound)
+        setPastRounds( pastTemp)
+        console.log(pastRounds)
+    }
+
     //reset the round to all zeroes (except for the person with a bye, who gets a match win but no game wins)
     function initRound(players, bye){
         let blankStandings= []
         blankStandings=players.map((player) => ({
+            name: player.name,
             points: 0,
             wins: 0,
             losses: 0
@@ -114,26 +129,19 @@ function Tournament(){
     }
 
     function saveStandings(players, matchups, roundTemp){
-        console.log(players)
-        console.log("matches")
-        console.log(matchups)
+        // console.log(players)
+        // console.log("matches")
+        // console.log(matchups)
         //need to use parameters and not state here to solve synchronicity issues
-        const thisRound={
-            matches: matchups,
-            playerList: players,
-            roundNum: roundTemp,
-        }
-        let pastTemp=pastRounds
-        pastTemp.push(thisRound)
-        setPastRounds(pastTemp)
-        axios.put("/api/drafts/draft/"+id, {
-            players: JSON.stringify(players),
-            matchups: JSON.stringify(matchups),
-            finalists: JSON.stringify(finalists),
-            round: roundTemp,
-            roundSnapshots: JSON.stringify(pastTemp)
-        })
-        .then(res => console.log(res.data))
+
+        // axios.put("/api/drafts/draft/"+id, {
+        //     players: JSON.stringify(players),
+        //     matchups: JSON.stringify(matchups),
+        //     finalists: JSON.stringify(finalists),
+        //     round: roundTemp,
+        //     roundSnapshots: JSON.stringify(pastRounds)
+        // })
+        // .then(res => console.log(res.data))
     }
 
     function checkIfOver(){
@@ -174,13 +182,14 @@ function Tournament(){
         let newRound=[]
         let unmatched=[]
         let newList=playerList.filter(player => !player.dropped);
+        newList=sortStandings(newList)
         for(let i=0; i<newList.length; i++){
             unmatched.push({name: newList[i].name, points:(newList[i].matchWins*3 + newList[i].matchDraws), opponents: newList[i].opponents, index: i})
         }
         let nextBatch=[]
         let pushNext=false
         while(unmatched.length >1){
-            console.log(unmatched.map(player => player.name))
+            // console.log(unmatched.map(player => player.name))
             pushNext=true
             nextBatch=[]
             let possible=[0];
@@ -202,16 +211,16 @@ function Tournament(){
             const p1index=possible[x]
             const p1=unmatched[p1index]
             possible.splice(x,1)
-            console.log(possible)
+            // console.log(possible)
             if(possible.length >0){
                 const partnerIndex=possible[(Math.floor(Math.random() * possible.length))]
                 const partner=unmatched[partnerIndex]
                 nextBatch.push({"player1": p1.name, index1: p1.index, "player2":partner.name, index2: partner.index})
                 if(partnerIndex> p1index){
                 unmatched.splice(partnerIndex, 1)
-                console.log(unmatched)
+                // console.log(unmatched)
                 unmatched.splice(p1index,1)
-                console.log(unmatched)
+                // console.log(unmatched)
                 }else{
                     unmatched.splice(p1index,1)
                     unmatched.splice(partnerIndex, 1)
@@ -254,7 +263,7 @@ function Tournament(){
                     let tryCount=0
                     let partner=0
                     while(!valid && tryCount <10){
-                        console.log(tryCount)
+                        // console.log(tryCount)
                         partner=(Math.floor(Math.random() * nextHighestPoints))+1
                         if(!unmatched[0].opponents.includes(unmatched[partner].name)){
                             valid=true
@@ -268,7 +277,7 @@ function Tournament(){
             }
             //now add nextBatch to the match list and update opponents
             if(pushNext){
-                console.log(nextBatch)
+                // console.log(nextBatch)
                 for(let i=0; i<nextBatch.length; i++){
                     newRound.push({player1: nextBatch[i].player1, player2: nextBatch[i].player2, complete: false})
                     newList[nextBatch[i].index1].opponents.push(nextBatch[i].player2)
@@ -279,9 +288,9 @@ function Tournament(){
     if(unmatched.length===1){
         newRound.push({"player1": unmatched[0].name, "player2": "Bye"})
         bye=unmatched[0].index
-        console.log(bye)
+        // console.log(bye)
     }
-    console.log(newRound)
+    // console.log(newRound)
     setMatches(newRound)
     setPlayerList(newList)
     saveStandings(newList, newRound, roundNum +1)
@@ -326,7 +335,7 @@ function Tournament(){
                 newRound[i].points=points2;
             }
         }
-        console.log(newRound)
+        // console.log(newRound)
         setCurrentRound(newRound)
     }
 
@@ -337,7 +346,7 @@ function Tournament(){
                 winners.push(playerList[i].name)
             }
         }
-        console.log(winners)
+        // console.log(winners)
         setMatches({"player1":winners[0], "player2":winners[1], "complete": false})
         setFinalists(winners)
     }
@@ -347,53 +356,100 @@ function Tournament(){
         saveStandings(playerList, finalMatchups, roundNum )
     }
 
-    function finishRound(){
-        let newStandings=playerList;
-        for(let i=0; i<currentRound.length; i++){
-            newStandings[i].gameWins += currentRound[i].wins;
-            newStandings[i].gameLosses += currentRound[i].losses;
-            if(currentRound[i].points === 3){
-                newStandings[i].matchWins +=1;
-            }else if(currentRound[i].points===1){
-                newStandings[i].matchDraws +=1;
-            }else if(currentRound[i].points===0){
-                newStandings[i].matchLosses+=1;
+    function compileStandings(player, back){
+        //this function will work for either starting a new round or going back to a previous round. If going back, the back parameter should be true
+        player.points=0; 
+        player.matchWins=0;
+        player.matchLosses=0;
+        player.matchDraws=0;
+        player.gameWins=0;
+        player.gameLosses=0;
+        let x= pastRounds.length
+        if(back){
+            x--
+            player.opponents.pop()
+        }
+        for(let i=0; i<x; i++){
+            for(let j=0; j<pastRounds[i].currentRound.length; j++){
+                if(pastRounds[i].currentRound[j].name===player.name){
+                    let element=pastRounds[i].currentRound[j]
+                    player.points+= element.points
+                    player.gameLosses+= element.losses
+                    player.gameWins+= element.wins
+                    if(element.points===3){
+                        player.matchWins++
+                    }else if(element.points==1){
+                        player.matchDraws++
+                    }else{
+                        player.matchLosses++
+                    }
+                }
             }
         }
-        for(let i=0; i<currentRound.length; i++){
-            newStandings[i].oppWinRate=oppMatchWin(i)
+        if(!back){
+            for(let i=0; i<currentRound.length; i++){
+                if(currentRound[i].name===player.name){
+                    let element=currentRound[i]
+                    player.points+= element.points
+                    player.gameLosses+= element.losses
+                    player.gameWins+= element.wins
+                    if(element.points===3){
+                        player.matchWins++
+                    }else if(element.points==1){
+                        player.matchDraws++
+                    }else{
+                        player.matchLosses++
+                    }
+                }
+            }
         }
+        return player
+    }
+
+    function finishRound(){
+        let newStandings=playerList.map(player => compileStandings(player, false));
+        addPastRound(matches, playerList, roundNum, currentRound)
+
+        for(let i=0; i<newStandings.length; i++){
+            newStandings[i].oppWinRate=oppMatchWin(i, newStandings)
+        }
+        // console.log(newStandings)
         if(roundNum===swissRounds + 1){
             populateFinals()
         }
         //sort by game win %, opp match win % then points
 
-        newStandings.sort((a, b) => {
-            return (a.gameWins/(a.gameWins+a.gameLosses))>(a.gameWins/(a.gameWins+a.gameLosses)) ? -1 : 1
-        })
-        newStandings.sort((a, b) => {
-            return (a.oppWinRate)>(b.oppWinRate) ? -1 : 1
-        })
-        newStandings.sort((a, b) => {
-            return (a.matchWins * 3 + a.matchDraws)>(b.matchWins*3 + b.matchDraws) ? -1 : 1
-        })
-        // console.log(newStandings)
-        setPlayerList([...playerList],newStandings)
+
+        setPlayerList(newStandings)
         checkIfOver();
     }
 
-    function oppMatchWin(i){
+    function sortStandings(standings){
+        standings.sort((a, b) => {
+            return (a.gameWins/(a.gameWins+a.gameLosses))>(b.gameWins/(b.gameWins+b.gameLosses)) ? -1 : 1
+        })
+        standings.sort((a, b) => {
+            return (a.oppWinRate)>(b.oppWinRate) ? -1 : 1
+        })
+        standings.sort((a, b) => {
+            return (a.matchWins * 3 + a.matchDraws)>(b.matchWins*3 + b.matchDraws) ? -1 : 1
+        })
+        return(standings)
+    }
+
+    function oppMatchWin(i, standings){
+
         let oppWins=0;
         let oppMatches=0;
-        let thisPlayer=playerList[i]
+        let thisPlayer=standings[i]
         if(!thisPlayer.opponents){
             return 0;
         }
         let prevOpps=thisPlayer.opponents
-        for(let j=0; j<playerList.length; j++){
-            if(prevOpps.includes(playerList[j].name)){
-                oppWins += playerList[j].matchWins
-                oppMatches += playerList[j].matchWins + playerList[j].matchLosses
+        for(let j=0; j<standings.length; j++){
+            if(prevOpps.includes(standings[j].name)){
+                oppWins += standings[j].matchWins
+                oppMatches += standings[j].matchWins + standings[j].matchLosses
             }
         }
         if (oppMatches===0){
@@ -422,7 +478,35 @@ function Tournament(){
     }
 
     function goBack(){
-        console.log("previous round")
+        // console.log(pastRounds)
+        //it's -2 and not -1 because last is not the round number of the previous, but rather the position in the array of the previous round
+        const last=roundNum-2;
+        let byePlayer=""
+        let byeIndex=-1
+        console.log(pastRounds[last])
+        let newStandings=playerList.map(player => compileStandings(player, true));
+        let newMatchList=pastRounds[last].matches
+        let newCurrentRound=pastRounds[last].currentRound
+        for(let i=0; i< newMatchList.length; i++){
+            if(newMatchList[i].player2==="Bye"){
+                byePlayer=newMatchList[i].player1
+            }else{
+            newMatchList[i].complete=false
+            }
+        }
+        for(let i=0; i< newStandings.length; i++){
+            if(newStandings[i].name===byePlayer){
+                byeIndex=i
+            }
+        }
+        console.log(newStandings)
+        setMatches(newMatchList)
+        setPlayerList(newStandings)
+        console.log(newCurrentRound)
+        setRoundNum(roundNum-1)
+        //delete current round
+        pastRounds.pop()
+        initRound(newStandings, byeIndex)
     }
 
     return(

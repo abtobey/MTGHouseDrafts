@@ -5,6 +5,7 @@ import "./style.css"
 function BackWarning(props){
 
     function goBack(){
+      props.clickBack()
         props.goBack()
     }
 
