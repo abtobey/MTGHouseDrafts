@@ -134,14 +134,14 @@ function Tournament(){
         // console.log(matchups)
         //need to use parameters and not state here to solve synchronicity issues
 
-        // axios.put("/api/drafts/draft/"+id, {
-        //     players: JSON.stringify(players),
-        //     matchups: JSON.stringify(matchups),
-        //     finalists: JSON.stringify(finalists),
-        //     round: roundTemp,
-        //     roundSnapshots: JSON.stringify(pastRounds)
-        // })
-        // .then(res => console.log(res.data))
+        axios.put("/api/drafts/draft/"+id, {
+            players: JSON.stringify(players),
+            matchups: JSON.stringify(matchups),
+            finalists: JSON.stringify(finalists),
+            round: roundTemp,
+            roundSnapshots: JSON.stringify(pastRounds)
+        })
+        .then(res => console.log(res.data))
     }
 
     function checkIfOver(){
@@ -418,7 +418,7 @@ function Tournament(){
             populateFinals()
         }
         //sort by game win %, opp match win % then points
-
+        newStandings=sortStandings(newStandings)
 
         setPlayerList(newStandings)
         checkIfOver();
