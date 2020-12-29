@@ -147,7 +147,7 @@ function Tournament(){
     function checkIfOver(){
         setRoundNum(roundNum +1)    
         if(roundNum === swissRounds){
-            pairTop4([])
+            pairTop4(playerList)
         }
         else   {
             startNextRound()
@@ -157,10 +157,11 @@ function Tournament(){
     function pairTop4(list){
         let playerArray=[]
         if(playerList.length===0){
-            playerArray=list
+            playerArray=sortStandings(list)
         }else{
-            playerArray=playerList
+            playerArray=sortStandings(playerList)
         }
+        console.log(playerArray)
         let bracket=[]
         //pairs first place with 4th and 2nd place with 3rd
         bracket.push({"player1":playerArray[0].name,  "player2": playerArray[3].name, complete: false})
