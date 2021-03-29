@@ -197,21 +197,22 @@ function Tournament(){
             let samePoints=0;
             for(let i=1; i< unmatched.length; i++){
                 if (unmatched[i].points===unmatched[0].points){
-                    if(!unmatched[0].opponents.includes(unmatched[i].name)){
+                    if(!unmatched[0].opponents.includes(unmatched[i].name.toString())){
                     possible.push(i)
                 }
                 samePoints++
                 }
             }
+            console.log(possible)
             //if this is the last match in the group of players with the same number of points
             if (samePoints<2){
                 pushNext=true;
             }
             //select a random player because if we start with pairing player 0, it guarantees the person in the first slot won't get a pair down or bye
-            const x=(Math.floor(Math.random() * possible.length))
-            const p1index=possible[x]
+            // const x=(Math.floor(Math.random() * possible.length))
+            const p1index=possible[0]
             const p1=unmatched[p1index]
-            possible.splice(x,1)
+            possible.splice(0,1)
             // console.log(possible)
             if(possible.length >0){
                 const partnerIndex=possible[(Math.floor(Math.random() * possible.length))]
