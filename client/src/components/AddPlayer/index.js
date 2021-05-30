@@ -24,8 +24,8 @@ function AddPlayer(props){
         if(players.includes(formObject.player)){
             setErrorMessage(formObject.player +" already added")
         }
-        else if(players.length >=10){
-            setErrorMessage("Maximum is 10 players")
+        else if(players.length >=12){
+            setErrorMessage("Maximum is 12 players")
 
         }
         else{
