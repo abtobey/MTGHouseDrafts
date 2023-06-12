@@ -548,6 +548,7 @@ function Tournament(){
                 Drop
             </div>
         </div>
+        <div className="standingContainer">
             {playerList.map((player, i) => <Standings 
             playerName={player.name}
             matchWins={player.matchWins}
@@ -561,6 +562,7 @@ function Tournament(){
             index={i}
             dropped={player.dropped || false} 
             toggleDrop={toggleDrop}/>)}
+        </div>
             {finalists.length===0 && matches.map((match, i) => <Match key={roundNum + " " +i} id={i} onClick={updateStandings} complete={match.complete} player1={match.player1} player2={match.player2}/>)}
             {finalists.length===2 && <Match  id="finals" onClick={finishDraft} player1={finalists[0]} player2={finalists[1]}/>}
             {roundComplete && <button className="btn finishBtn btn-primary waves-effect waves-light hoverable accent-3" onClick={finishRound}>Finish Round</button>}

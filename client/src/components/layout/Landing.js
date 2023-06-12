@@ -20,7 +20,7 @@ class Landing extends Component {
               Create an account to get started or log in
             </p>
             <br />
-            <div className="col s6">
+            <div className="col s4">
               <Link
                 to="/register"
                 style={{
@@ -33,7 +33,7 @@ class Landing extends Component {
                 Register
               </Link>
             </div>
-            <div className="col s6">
+            <div className="col s4">
               <Link
                 to="/login"
                 style={{
